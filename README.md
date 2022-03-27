@@ -1,2 +1,2 @@
 # paperclip
-a powerful markdown notepad
+a notepad app

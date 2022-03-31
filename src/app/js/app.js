@@ -106,8 +106,8 @@ document.getElementById("add-page-btn").onclick = () => {
 document.getElementById("del-page-btn").onclick = () => {
 	let ask = confirm('Are you sure you want to delete this page?')
 	if (ask) {
-		delete folder[curBook][curPage]
-		document.querySelector('.tree-item[data-name="' + Object.keys(folder[curBook])[0] + '"]').classList.toggle('selected-page')added full page system
+		delete folder[curBook][curPage];
+		document.querySelector('.tree-item[data-name="' + Object.keys(folder[curBook])[0] + '"]').classList.toggle('selected-page')
 		updateUi(curBook, Object.keys(folder[curBook])[0])
 	}
 }

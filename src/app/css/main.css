@@ -169,6 +169,7 @@ input[type="text"]:focus, select:focus {
 	list-style: none;
 	transform: translate(-40px, 0);
 	border: 1px solid var(--accent);
+	overflow-x: hidden;
 }
 #tree-view > li:hover {
 	background-color: var(--accent);
@@ -178,4 +179,7 @@ input[type="text"]:focus, select:focus {
 #tree-view > li:active {
 	background-color: var(--color);
 	color: var(--background);
+}
+.selected-page {
+	border: 3px solid var(--accent) !important;
 }

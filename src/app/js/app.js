@@ -57,6 +57,8 @@ function switchPage(page) {
 	editorFocus()
 	document.getElementById('cur-note').value = page
 	document.getElementById('cur-note').dataset.pre = page
+	document.querySelector('.selected-page').classList.toggle('selected-page')
+	document.querySelector('.tree-item[data-name="' + page + '"]').classList.toggle('selected-page')
 }
 function updateTree() {
 	let tree = document.getElementById('tree-view')
@@ -69,6 +71,12 @@ function updateTree() {
 		doc.dataset.name = books[i]
 		doc.onclick = () => {
 			switchPage(books[i])
+		}
+		doc.ondblclick = () => {
+			document.getElementById("cur-note").focus()
+		}
+		if (curPage == books[i]) {
+			doc.classList.toggle('selected-page')
 		}
 		tree.appendChild(doc)
 	}
@@ -87,6 +95,21 @@ document.getElementById("cur-note").onchange = () => {
 	folder[curBook][name] = folder[curBook][pre]
 	delete folder[curBook][pre]
 	updateUi(curBook, name)
+}
+document.getElementById("add-page-btn").onclick = () => {
+	let name = prompt('Enter the name of the new page:')
+	if (name) {
+		folder[curBook][name] = {ops: []}
+	}
+	updateUi(curBook, name)
+}
+document.getElementById("del-page-btn").onclick = () => {
+	let ask = confirm('Are you sure you want to delete this page?')
+	if (ask) {
+		delete folder[curBook][curPage]
+		document.querySelector('.tree-item[data-name="' + Object.keys(folder[curBook])[0] + '"]').classList.toggle('selected-page')added full page system
+		updateUi(curBook, Object.keys(folder[curBook])[0])
+	}
 }
 function updateBookName(prename, name) {}
 

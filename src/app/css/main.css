@@ -143,12 +143,16 @@ input[type="text"]:focus, select:focus {
 	height: calc(100% - 120px);
 	padding: 35px;
 }
+#tree > button {
+	font-size: 15px;
+}
 #book-select {
 	font: inherit;
-	padding: 10px;
+	font-size: small;
+	padding: 5px;
 	border: none;
-	height: 40px;
-	width: calc(100% - 50px);
+	height: 30px;
+	width: calc(100% - 75px);
 }
 #book-name {
 	width: calc(100% - 30px);
@@ -182,4 +186,52 @@ input[type="text"]:focus, select:focus {
 }
 .selected-page {
 	border: 3px solid var(--accent) !important;
+}
+#menu-btn {
+	display: none;
+}
+#menu-btn:hover {
+	box-shadow: none;
+	color: var(--background);	
+}
+/* if window width is less than 750px */
+@media screen and (max-width: 750px) {
+	#topbar {
+		height: 80px;
+	}
+	#right-toolbar {
+		transform: translate(-15px, 35px);
+	}
+	#cur-note {
+		font-size: medium;
+		padding: 5px;
+		width: calc(100% - 220px);
+	}
+	#editor-box {
+		width: calc(100% - 55px);
+		height: calc(100% - 150px);
+		right: 0;
+		top: 90px;
+	}
+	#menu-btn {
+		color: var(--background) !important;
+		display: inline-block;
+		position: fixed;
+		top: 0;
+		right: 0;
+		width: 50px;
+		height: 50px;
+		background-color: var(--accent);
+		border-radius: 0;
+		border-bottom-left-radius: 10px;
+		cursor: pointer;
+		z-index: 100;
+		opacity: .9;
+	}
+	.move-side {
+		transform: translate(90vw, 0);
+	}
+	#tree {
+		width: 80%;
+	}
 }

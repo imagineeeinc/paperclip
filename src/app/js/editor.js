@@ -28,10 +28,6 @@ var quill = new Quill('#editor', {
 quill.focus()
 document.getElementById("undo-btn").onclick = () => quill.history.undo()
 document.getElementById("redo-btn").onclick = () => quill.history.undo()
-document.getElementById("save-btn").onclick = () => {
-	console.log(quill.getContents())
-	console.log(quill.getText())
-}
 
 export var setContents = (contents) => {
 	quill.setContents(contents)

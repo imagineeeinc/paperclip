@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite --host",
-    "build": "npm run gen:fav && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "gen:fav": "cd src && pwa-asset-generator ./img/paperclip.png ./favicon --background #00000000 -p 0 -o false -m ./manifest.json -i ./app/index.html -t png -f true --mstile true -d true --log -c"
   },

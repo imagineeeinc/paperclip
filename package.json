@@ -4,10 +4,12 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "npm run gen:fav && vite build",
+    "preview": "vite preview",
+    "gen:fav": "cd src && pwa-asset-generator ./img/paperclip.png ./favicon --background #00000000 -p 0 -o false -m ./manifest.json -i ./app/index.html -t png -f true --mstile true -d true --log -c"
   },
   "devDependencies": {
+    "pwa-asset-generator": "^6.0.6",
     "vite": "^2.8.0"
   },
   "dependencies": {

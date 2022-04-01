@@ -1,0 +1,41 @@
+{
+  "background_color": "#003b46",
+  "description": "A feature rich notebook app",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "PaperClip Notebook App",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "short_name": "Paperclip",
+  "start_url": "/app",
+  "theme_color": "#003a46",
+  "categories": [],
+  "screenshots": [],
+  "icons": [
+    {
+      "src": "../favicon/manifest-icon-192.maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../favicon/manifest-icon-192.maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "../favicon/manifest-icon-512.maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../favicon/manifest-icon-512.maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": []
+}

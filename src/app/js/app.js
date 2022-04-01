@@ -158,6 +158,6 @@ window.onunload = () => {
 	localStorage.setItem('notebook', JSON.stringify(folder))
 }
 
-document.getElementById("menu-btn").onclick = () => {
+document.getElementById("menu-btn").addEventListener('click', () => {
 	document.getElementById("editor-box").classList.toggle("move-side")
-}
+})

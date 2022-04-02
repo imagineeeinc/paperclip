@@ -1,6 +1,6 @@
 import '../css/main.css'
 import {setContents, getContents, changeHandler, editorFocus} from './editor.js'
-
+var menuOpen = false
 var folder = {}
 var curPage = 0
 var curBook = 'default book'
@@ -50,6 +50,11 @@ function switchPage(page) {
 	curPage = page
 	localStorage.setItem('lastPage', page)
 	setContents(folder[curBook][curPage].data)
+    if (menuOpen == true) {
+        document.getElementById("editor-box").classList.toggle("move-side")
+        menuOpen = false
+
+    }
 	editorFocus()
 	document.getElementById('cur-note').value = folder[curBook][curPage].name
 	document.getElementById('cur-note').dataset.pre = folder[curBook][curPage].name
@@ -160,4 +165,5 @@ window.onunload = () => {
 
 document.getElementById("menu-btn").addEventListener('click', () => {
 	document.getElementById("editor-box").classList.toggle("move-side")
+    menuOpen = !menuOpen
 })

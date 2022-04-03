@@ -1,9 +1,22 @@
 import '../css/main.css'
-import {setContents, getContents, changeHandler, editorFocus} from './editor.js'
+import {setContents, getContents, changeHandler, editorFocus, editMode} from './editor.js'
+import {signin, signout, updateDb} from './backend.js'
+import MicroModal from 'micromodal';
+MicroModal.init();
+
+window.onload = () => document.body.style.opacity = 1
+
+var edit = true
 
 var folder = {}
 var curPage = 0
 var curBook = 'default book'
+window.onunload = () => {
+	localStorage.setItem('lastBook', curBook)
+	localStorage.setItem('lastPage', curPage)
+	localStorage.setItem('notebook', JSON.stringify(folder))
+	updateDb()
+}
 var tree = document.getElementById('tree-view')
 if (localStorage.getItem('notebook')) {
 	folder = JSON.parse(localStorage.getItem('notebook'))
@@ -39,6 +52,7 @@ function updateUi(book, page) {
 	changeNotebook(book)
 	switchPage(page)
 }
+window.updateUi = updateUi
 function changeNotebook(book) {
 	curBook = book
 	localStorage.setItem('lastBook', book)
@@ -57,7 +71,6 @@ function switchPage(page) {
 	document.querySelector('.tree-item[data-num="' + page + '"]').classList.toggle('selected-page')
 }
 function updateTree() {
-	let tree = document.getElementById('tree-view')
 	tree.innerHTML = ''
 	let books = folder[curBook]
 	for (let i = 0; i < books.length; i++) {
@@ -152,12 +165,26 @@ changeHandler((eventName, ...args)=>{
 })
 setInterval(() => localStorage.setItem('notebook', JSON.stringify(folder)), 5000)
 
-window.onunload = () => {
-	localStorage.setItem('lastBook', curBook)
-	localStorage.setItem('lastPage', curPage)
-	localStorage.setItem('notebook', JSON.stringify(folder))
-}
-
 document.getElementById("menu-btn").addEventListener('click', () => {
 	document.getElementById("editor-box").classList.toggle("move-side")
+})
+document.getElementById("settings-btn").addEventListener('click', () => {
+	document.getElementById("editor-box").classList.toggle("move-side")
+	MicroModal.show('settings')
+})
+document.getElementById("edit-btn").addEventListener('click', () => {
+	edit = !edit
+	editMode(edit)
+	if (edit) {
+		document.getElementById("edit-btn").innerHTML = "edit_off"
+		editorFocus()
+	} else {
+		document.getElementById("edit-btn").innerHTML = "edit"
+	}
+})
+document.getElementById("signin-google").addEventListener('click', () => {
+	signin('google')
+})
+document.getElementById("signout-btn").addEventListener('click', () => {
+	signout()
 })

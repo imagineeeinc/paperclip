@@ -41,3 +41,6 @@ export var changeHandler = (handler) => {
 export var editorFocus = () => {
 	quill.focus()
 }
+export var editMode = (edit) => {
+	quill.enable(edit)
+}

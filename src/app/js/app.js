@@ -1,4 +1,5 @@
 import '../css/main.css'
+<<<<<<< HEAD
 import {setContents, getContents, changeHandler, editorFocus, editMode} from './editor.js'
 import {signin, signout, updateDb} from './backend.js'
 import MicroModal from 'micromodal';
@@ -8,6 +9,10 @@ window.onload = () => document.body.style.opacity = 1
 
 var edit = true
 
+=======
+import {setContents, getContents, changeHandler, editorFocus} from './editor.js'
+var menuOpen = false
+>>>>>>> f6ad0efa04cb091e90c7e7ce5169ec6025e3e295
 var folder = {}
 var curPage = 0
 var curBook = 'default book'
@@ -64,6 +69,11 @@ function switchPage(page) {
 	curPage = page
 	localStorage.setItem('lastPage', page)
 	setContents(folder[curBook][curPage].data)
+    if (menuOpen == true) {
+        document.getElementById("editor-box").classList.toggle("move-side")
+        menuOpen = false
+
+    }
 	editorFocus()
 	document.getElementById('cur-note').value = folder[curBook][curPage].name
 	document.getElementById('cur-note').dataset.pre = folder[curBook][curPage].name
@@ -167,6 +177,7 @@ setInterval(() => localStorage.setItem('notebook', JSON.stringify(folder)), 5000
 
 document.getElementById("menu-btn").addEventListener('click', () => {
 	document.getElementById("editor-box").classList.toggle("move-side")
+<<<<<<< HEAD
 })
 document.getElementById("settings-btn").addEventListener('click', () => {
 	document.getElementById("editor-box").classList.toggle("move-side")
@@ -188,3 +199,7 @@ document.getElementById("signin-google").addEventListener('click', () => {
 document.getElementById("signout-btn").addEventListener('click', () => {
 	signout()
 })
+=======
+    menuOpen = !menuOpen
+})
+>>>>>>> f6ad0efa04cb091e90c7e7ce5169ec6025e3e295

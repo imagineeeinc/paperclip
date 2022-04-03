@@ -1,5 +1,4 @@
 import '../css/main.css'
-<<<<<<< HEAD
 import {setContents, getContents, changeHandler, editorFocus, editMode} from './editor.js'
 import {signin, signout, updateDb} from './backend.js'
 import MicroModal from 'micromodal';
@@ -8,11 +7,8 @@ MicroModal.init();
 window.onload = () => document.body.style.opacity = 1
 
 var edit = true
-
-=======
-import {setContents, getContents, changeHandler, editorFocus} from './editor.js'
 var menuOpen = false
->>>>>>> f6ad0efa04cb091e90c7e7ce5169ec6025e3e295
+
 var folder = {}
 var curPage = 0
 var curBook = 'default book'

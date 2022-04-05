@@ -53,7 +53,6 @@ button {
 	opacity: .8;
 	font-size: inherit;
 	padding: 5px;
-	margin: 0 2px;
 }
 button:hover, button:focus {
 	opacity: 1;
@@ -112,7 +111,6 @@ input[type="text"]:focus, select:focus {
 	display: inline-block;
 	height: 50px;
 	padding-right: 10px;
-	border-top-right-radius: 10px;
 	border-bottom-right-radius: 10px;
 	left:0;
 	top:0;
@@ -145,6 +143,7 @@ input[type="text"]:focus, select:focus {
 	top: 50px;
 	width: 65%;
 	height: calc(100% - 120px);
+	z-index: 20;
 }
 #editor {
 	height: calc(100% - 50px);
@@ -198,17 +197,6 @@ input[type="text"]:focus, select:focus {
 	background-color: var(--color);
 	color: var(--background);
 }
-#panel {
-	height: auto;
-	width: auto;
-	padding: 10px;
-	border-radius: 10px;
-	background-color: var(--white);
-	box-shadow: 0 0 10px var(--color);
-}
-#panel:hover {
-	box-shadow: 6px 6px var(--color);
-}
 
 .selected-page {
 	border: 3px solid var(--accent) !important;
@@ -220,10 +208,25 @@ input[type="text"]:focus, select:focus {
 	box-shadow: none;
 	color: var(--background);	
 }
+#panel {
+	height: auto;
+	position: absolute;
+	left: 20px;
+	padding: 10px;
+	border-radius: 10px;
+	background-color: var(--white);
+	box-shadow: 0 0 10px var(--color);
+}
+#panel:hover {
+	box-shadow: 6px 6px var(--color);
+}
 @media screen and (min-width: 751px) {
 	#tree-view {
 		margin-top: 10px;
-		height: calc(100vh - 280px);
+	}
+	#panel {
+		width: calc(25% - 10px);
+		bottom: 30px;
 	}
 }
 @media screen and (max-width: 750px) {
@@ -240,7 +243,8 @@ input[type="text"]:focus, select:focus {
 	}
 	#editor-box {
 		width: calc(100% - 55px);
-		height: calc(100% - 150px);
+		height: calc(100% - 140px);
+		margin-bottom: 0;
 		right: 0;
 		top: 90px;
 	}
@@ -267,12 +271,19 @@ input[type="text"]:focus, select:focus {
 	}
 	#tree-view {
 		margin-top: 20px;
-		height: calc(100vh - 310px);
+	}
+	#panel {
+		width: calc(80% - 10px);
+		bottom: 10px;
 	}
 }
 
 #signin-google {
 	background-color: cornflowerblue;
+}
+#signin-github {
+	background-color: black;
+	color: white;
 }
 #signout-btn {
 	background-color: crimson;
@@ -281,6 +292,7 @@ input[type="text"]:focus, select:focus {
 	padding: 10px;
 	border-radius: 5px;
 	font-size: large;
+	margin: 5px;
 }
 #user-photo > img {
 	height: 5ch;

@@ -62,18 +62,18 @@
       <br>
       <ul id="tree-view">
       </ul>
-      <div id="panel">
-        <button class="material-icons" id="settings-btn" title="Go to settings">
-          settings
-        </button>
-        <button class="material-icons" id="edit-btn" title="Edit Mode">
-          edit_off
-        </button>
-      </div>
     </div>
     <div id="editor-box">
       <div id="editor">
       </div>
+    </div>
+    <div id="panel">
+      <button class="material-icons" id="settings-btn" title="Go to settings">
+        settings
+      </button>
+      <button class="material-icons" id="edit-btn" title="Edit Mode">
+        edit_off
+      </button>
     </div>
 
     <div id="settings" aria-hidden="true" class="modal">
@@ -94,15 +94,21 @@
               <br>
               <br>
               <button id="signin-google" class="auth-btn">Sign in with Google </button>
+              <button id="signin-github" class="auth-btn">Sign in with Github </button>
             </div>
             <div id="logdin" class="hide">
               <span id="user-photo"></span><span id="user-name"></span>
               <br>Email: <span id="user-email"></span>
               <br>User ID: <span id="user-id"></span>
-              <br>
+              <br>Login Provider: <span id="user-provider"></span>
               <br>
               <button id="signout-btn" class="auth-btn">Sign Out</button>
             </div> 
+          </section>
+          <section>
+            <h2>Data</h2>
+            <button id="del-all">Delete All data</button>
+            <button id="req-del-account" class="auth-obj">Request Delete Account (Not Implemented)</button>
           </section>
           <section>
             <h2>Themes</h2>

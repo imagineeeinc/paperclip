@@ -3,6 +3,8 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
 import { getFirestore, collection, query, where, setDoc, doc, getDoc, updateDoc, serverTimestamp, enableIndexedDbPersistence } from "firebase/firestore";
+
+import {diffString} from './jsDiff.js'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -51,19 +53,51 @@ export var signin = (e) => {
       // ...
     });
   }
+  if(e === 'github') {
+    signInWithPopup(auth, githubAuth)
+    .then((result) => {
+      // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+      const credential = GithubAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      // The signed-in user info.
+      const user = result.user;
+      // ...
+    }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.email;
+      // The AuthCredential type that was used.
+      const credential = GithubAuthProvider.credentialFromError(error);
+      // ...
+    });
+  }
+  if (e === 'email') {
+    //TODO: email signin
+  }
 }
 export var signout = () => {
   auth.signOut()
 }
+var updateUiCode = (b, p) => {
+  updateUi(b, p)
+}
+export var updateUiCodeFn = (callback) => {
+  updateUiCode = callback
+}
 
 
 export var updateDb = () => {
-  updateDoc(doc(documentRef, localStorage.getItem('uid')), {
-    books: localStorage.getItem("notebook"),
-    lastEdited: serverTimestamp(),
-    lastBook: localStorage.getItem("lastBook"),
-    lastPage: localStorage.getItem("lastPage")
-  })
+  if (localStorage.getItem("notebook") !== localStorage.getItem("lastNotebook")) {
+    updateDoc(doc(documentRef, localStorage.getItem('uid')), {
+      books: localStorage.getItem("notebook"),
+      lastEdited: serverTimestamp(),
+      lastBook: localStorage.getItem("lastBook"),
+      lastPage: localStorage.getItem("lastPage")
+    })
+  }
+  localStorage.setItem("lastNotebook", localStorage.getItem("notebook"))
 }
 
 auth.onAuthStateChanged(async user => {
@@ -76,25 +110,29 @@ auth.onAuthStateChanged(async user => {
     document.getElementById("user-photo").append(img)
     document.getElementById("user-email").innerHTML = user.email
     document.getElementById("user-id").innerHTML = user.uid
+    document.getElementById("user-provider").innerHTML = user.providerData[0].providerId
     localStorage.setItem('uid', user.uid)
 
     documentRef = collection(store,"userDocuments")
-    /* addDoc(documentRef, {
-      email: user.email,
-      displayName: user.displayName,
-      books: {},
-      lastEdited: serverTimestamp()
-    }, user.uid) */
-    //const q = query(documentRef, where("uid", "==", user.uid))
     const docSnap = await getDoc(doc(documentRef, user.uid));
     if (docSnap.exists()) {
-      localStorage.setItem('lastPage', docSnap.data().lastPage)
+      let online = docSnap.data().books
+      let offline = localStorage.getItem("notebook")
+      if (online !== offline) {
+        let ask = confirm("You have a different notebook online and offline. Would you like to keep the online one?")
+        if (ask) {
+          localStorage.setItem("notebook", online)
+        } else {
+          localStorage.setItem("notebook", offline)
+        }
+      }
       localStorage.setItem('lastBook', docSnap.data().lastBook)
-      localStorage.setItem('notebook', docSnap.data().books)
-      window.updateUi(docSnap.data().lastBook, docSnap.data().lastPage)
+      localStorage.setItem('lastPage', docSnap.data().lastPage)
+      updateUiCode(docSnap.data().lastBook, docSnap.data().lastPage)
       updateDb()
     } else {
       setDoc(doc(documentRef, user.uid), {
+        uid: user.uid,
         email: user.email,
         displayName: user.displayName,
         books: localStorage.getItem("notebook"),
@@ -104,10 +142,7 @@ auth.onAuthStateChanged(async user => {
       })
     }
     setInterval(()=>{
-      if (localStorage.getItem("notebook") !== localStorage.getItem("lastNotebook")) {
-        updateDb()
-      }
-      localStorage.setItem("lastNotebook", localStorage.getItem("notebook"))
+      updateDb()
     }, 1000*5)
     
   } else {
@@ -115,5 +150,38 @@ auth.onAuthStateChanged(async user => {
     document.getElementById("logdin").classList.add("hide")
     document.getElementById("user-name").innerHTML = ''
     document.getElementById("user-photo").innerHTML = ''
+    localStorage.removeItem('uid')
+    localStorage.removeItem('email')
+    localStorage.removeItem('signInProvider')
+  }
+})
+document.getElementById("del-all").addEventListener("click", () => {
+  let ask = confirm("Are you sure you want to delete all your data?")
+  if (ask) {
+    localStorage.removeItem("notebook", "")
+    localStorage.removeItem("lastBook", "")
+    localStorage.removeItem("lastPage", "")
+    localStorage.removeItem("lastNotebook", "")
+    //delete of firbase
+    deleteDoc(doc(documentRef, localStorage.getItem('uid')))
+  }
+})
+document.getElementById("req-del-account").addEventListener("click", () => {
+  let ask = confirm("Are you sure you want to delete your account?")
+  if (ask) {
+    if (!localStorage.getItem('reqDelAccount')) {
+      updateDoc(doc(documentRef, localStorage.getItem('uid')), {
+        books: localStorage.getItem("notebook"),
+        lastEdited: serverTimestamp(),
+        lastBook: localStorage.getItem("lastBook"),
+        lastPage: localStorage.getItem("lastPage"),
+        reqDelAccount: true
+      })
+      signout()
+      localStorage.setItem('reqDelAccount', true)
+      alert("Your account will be deleted in 24 hours")
+    } else {
+      alert("You have already requested to delete your account")
+    }
   }
 })

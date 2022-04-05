@@ -1,6 +1,13 @@
 import '../css/main.css'
 import {setContents, getContents, changeHandler, editorFocus, editMode} from './editor.js'
-import {signin, signout, updateDb} from './backend.js'
+import {signin, signout, updateDb, updateUiCodeFn} from './backend.js'
+
+function updateUi(book, page) {
+	changeNotebook(book)
+	switchPage(page)
+}
+updateUiCodeFn((b,p) => {folder=JSON.parse(localStorage.getItem("notebook"));updateUi(b,p)})
+window.updateUi = updateUi
 import MicroModal from 'micromodal';
 MicroModal.init();
 
@@ -49,11 +56,6 @@ if (localStorage.getItem('notebook')) {
 	location.reload()
 }
 
-function updateUi(book, page) {
-	changeNotebook(book)
-	switchPage(page)
-}
-window.updateUi = updateUi
 function changeNotebook(book) {
 	curBook = book
 	localStorage.setItem('lastBook', book)
@@ -68,7 +70,6 @@ function switchPage(page) {
     if (menuOpen == true) {
         document.getElementById("editor-box").classList.toggle("move-side")
         menuOpen = false
-
     }
 	editorFocus()
 	document.getElementById('cur-note').value = folder[curBook][curPage].name
@@ -173,7 +174,7 @@ setInterval(() => localStorage.setItem('notebook', JSON.stringify(folder)), 5000
 
 document.getElementById("menu-btn").addEventListener('click', () => {
 	document.getElementById("editor-box").classList.toggle("move-side")
-<<<<<<< HEAD
+	menuOpen = !menuOpen
 })
 document.getElementById("settings-btn").addEventListener('click', () => {
 	document.getElementById("editor-box").classList.toggle("move-side")
@@ -192,10 +193,9 @@ document.getElementById("edit-btn").addEventListener('click', () => {
 document.getElementById("signin-google").addEventListener('click', () => {
 	signin('google')
 })
+document.getElementById("signin-github").addEventListener('click', () => {
+	signin('github')
+})
 document.getElementById("signout-btn").addEventListener('click', () => {
 	signout()
 })
-=======
-    menuOpen = !menuOpen
-})
->>>>>>> f6ad0efa04cb091e90c7e7ce5169ec6025e3e295

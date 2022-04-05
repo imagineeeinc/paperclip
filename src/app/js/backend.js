@@ -3,8 +3,6 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
 import { getFirestore, collection, query, where, setDoc, doc, getDoc, updateDoc, serverTimestamp, enableIndexedDbPersistence } from "firebase/firestore";
-
-import {diffString} from './jsDiff.js'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -144,8 +142,16 @@ auth.onAuthStateChanged(async user => {
     setInterval(()=>{
       updateDb()
     }, 1000*5)
+
+    document.querySelectorAll(".auth-obj").forEach(e => {
+      e.classList.remove("hide")
+    })
     
   } else {
+    //select all class=auth-obj and hide them
+    document.querySelectorAll(".auth-obj").forEach(e => {
+      e.classList.add("hide")
+    })
     document.getElementById("no-signin").classList.remove('hide')
     document.getElementById("logdin").classList.add("hide")
     document.getElementById("user-name").innerHTML = ''
@@ -162,8 +168,10 @@ document.getElementById("del-all").addEventListener("click", () => {
     localStorage.removeItem("lastBook", "")
     localStorage.removeItem("lastPage", "")
     localStorage.removeItem("lastNotebook", "")
-    //delete of firbase
-    deleteDoc(doc(documentRef, localStorage.getItem('uid')))
+    //delete of firbase if signed in
+    if (auth.currentUser) {
+      deleteDoc(doc(documentRef, auth.currentUser.uid))
+    }
   }
 })
 document.getElementById("req-del-account").addEventListener("click", () => {
@@ -184,4 +192,8 @@ document.getElementById("req-del-account").addEventListener("click", () => {
       alert("You have already requested to delete your account")
     }
   }
+  alert("By the way the deleteing process is currently manually done so it will take longer than 24 hours (upto a month)")
+})
+document.getElementById("save-btn").addEventListener("click", () => {
+  updateDb()
 })

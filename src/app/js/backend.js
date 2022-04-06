@@ -119,9 +119,9 @@ auth.onAuthStateChanged(async user => {
     const docSnap = await getDoc(doc(documentRef, user.uid));
     if (docSnap.exists()) {
       let online
-      online = atob(docSnap.data().books)
+      online = docSnap.data().books
       if (online[0] != '{') {
-        online = docSnap.data().books
+        online = atob(docSnap.data().books)
       }
       let offline = localStorage.getItem("notebook")
       if (online !== offline) {

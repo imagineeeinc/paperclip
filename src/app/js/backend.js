@@ -140,6 +140,22 @@ auth.onAuthStateChanged(async user => {
       document.body.dataset.theme = localStorage.getItem('theme')
       updateUiCode(localStorage.getItem("lastBook"), docSnap.data().lastPage)
       updateDb()
+      window.addEventListener('beforeunload', function (e) {
+        if (localStorage.getItem("notebook") !== localStorage.getItem("lastNotebook")) {
+          // Cancel the event
+          e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
+          // Chrome requires returnValue to be set
+          e.returnValue = '';
+          updateDoc(doc(documentRef, localStorage.getItem('uid')), {
+            books: btoa(localStorage.getItem("notebook")),
+            lastEdited: serverTimestamp(),
+            lastBook: btoa(localStorage.getItem("lastBook")),
+            lastPage: localStorage.getItem("lastPage"),
+            theme: localStorage.getItem("theme")
+          })
+        }
+        localStorage.setItem("lastNotebook", localStorage.getItem("notebook"))
+      });
     } else {
       setDoc(doc(documentRef, user.uid), {
         uid: user.uid,

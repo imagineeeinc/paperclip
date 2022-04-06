@@ -122,6 +122,9 @@ auth.onAuthStateChanged(async user => {
       online = docSnap.data().books
       if (online[0] != '{') {
         online = atob(docSnap.data().books)
+        localStorage.setItem('lastBook', atob(docSnap.data().lastBook))
+      } else {
+        localStorage.setItem('lastBook', docSnap.data().lastBook)
       }
       let offline = localStorage.getItem("notebook")
       if (online !== offline) {
@@ -134,7 +137,6 @@ auth.onAuthStateChanged(async user => {
           localStorage.setItem("notebook", JSON.stringify(newOne))
         }
       }
-      localStorage.setItem('lastBook', atob(docSnap.data().lastBook))
       localStorage.setItem('lastPage', docSnap.data().lastPage)
       localStorage.setItem('theme', docSnap.data().theme || 'light')
       document.body.dataset.theme = localStorage.getItem('theme')

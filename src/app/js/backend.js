@@ -3,6 +3,9 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
 import { getFirestore, collection, query, where, setDoc, doc, getDoc, updateDoc, serverTimestamp, enableIndexedDbPersistence } from "firebase/firestore";
+
+import * as aes from 'crypto-js/aes'
+import * as enc from 'crypto-js/enc-utf8'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -89,10 +92,11 @@ export var updateUiCodeFn = (callback) => {
 export var updateDb = () => {
   if (localStorage.getItem("notebook") !== localStorage.getItem("lastNotebook")) {
     updateDoc(doc(documentRef, localStorage.getItem('uid')), {
-      books: localStorage.getItem("notebook"),
+      books: btoa(localStorage.getItem("notebook")),
       lastEdited: serverTimestamp(),
-      lastBook: localStorage.getItem("lastBook"),
-      lastPage: localStorage.getItem("lastPage")
+      lastBook: btoa(localStorage.getItem("lastBook")),
+      lastPage: localStorage.getItem("lastPage"),
+      theme: localStorage.getItem("theme")
     })
   }
   localStorage.setItem("lastNotebook", localStorage.getItem("notebook"))
@@ -114,29 +118,38 @@ auth.onAuthStateChanged(async user => {
     documentRef = collection(store,"userDocuments")
     const docSnap = await getDoc(doc(documentRef, user.uid));
     if (docSnap.exists()) {
-      let online = docSnap.data().books
+      let online
+      online = atob(docSnap.data().books)
+      if (online[0] != '{') {
+        online = docSnap.data().books
+      }
       let offline = localStorage.getItem("notebook")
       if (online !== offline) {
-        let ask = confirm("You have a different notebook online and offline. Would you like to keep the online one?")
+        let ask = confirm("You have a different notebook online and offline. Would you like to overwrite the offline copy with the online one?")
         if (ask) {
-          localStorage.setItem("notebook", online)
+          let newOne = {...JSON.parse(offline), ...JSON.parse(online)}
+          localStorage.setItem("notebook", JSON.stringify(newOne))
         } else {
-          localStorage.setItem("notebook", offline)
+          let newOne = {...JSON.parse(online), ...JSON.parse(offline)}
+          localStorage.setItem("notebook", JSON.stringify(newOne))
         }
       }
-      localStorage.setItem('lastBook', docSnap.data().lastBook)
+      localStorage.setItem('lastBook', atob(docSnap.data().lastBook))
       localStorage.setItem('lastPage', docSnap.data().lastPage)
-      updateUiCode(docSnap.data().lastBook, docSnap.data().lastPage)
+      localStorage.setItem('theme', docSnap.data().theme || 'light')
+      document.body.dataset.theme = localStorage.getItem('theme')
+      updateUiCode(localStorage.getItem("lastBook"), docSnap.data().lastPage)
       updateDb()
     } else {
       setDoc(doc(documentRef, user.uid), {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
-        books: localStorage.getItem("notebook"),
+        books: btoa(localStorage.getItem("notebook")),
         lastEdited: serverTimestamp(),
-        lastBook: localStorage.getItem("lastBook"),
-        lastPage: localStorage.getItem("lastPage")
+        lastBook: btoa(localStorage.getItem("lastBook")),
+        lastPage: localStorage.getItem("lastPage"),
+        theme: localStorage.getItem("theme")
       })
     }
     setInterval(()=>{
@@ -162,7 +175,7 @@ auth.onAuthStateChanged(async user => {
   }
 })
 document.getElementById("del-all").addEventListener("click", () => {
-  let ask = confirm("Are you sure you want to delete all your data?")
+  let ask = confirm("Are you sure you want to delete all your data? This cannot be undone with no chance of recovering.")
   if (ask) {
     localStorage.removeItem("notebook", "")
     localStorage.removeItem("lastBook", "")
@@ -175,7 +188,7 @@ document.getElementById("del-all").addEventListener("click", () => {
   }
 })
 document.getElementById("req-del-account").addEventListener("click", () => {
-  let ask = confirm("Are you sure you want to delete your account?")
+  let ask = confirm("Are you sure you want to delete your account? THis will delete all your data and cannot be undone, with no chance of recoverd.")
   if (ask) {
     if (!localStorage.getItem('reqDelAccount')) {
       updateDoc(doc(documentRef, localStorage.getItem('uid')), {
@@ -183,17 +196,62 @@ document.getElementById("req-del-account").addEventListener("click", () => {
         lastEdited: serverTimestamp(),
         lastBook: localStorage.getItem("lastBook"),
         lastPage: localStorage.getItem("lastPage"),
-        reqDelAccount: true
+        reqDelAccount: true,
+        theme: localStorage.getItem("theme")
       })
       signout()
       localStorage.setItem('reqDelAccount', true)
       alert("Your account will be deleted in 24 hours")
+      alert("By the way the deleting process is currently manually done so it will take longer than 24 hours (upto a month)")
     } else {
-      alert("You have already requested to delete your account")
+      let ask1 = confirm("You have already requested to delete your account, would you like to cancel it?")
+      if (ask1) {
+        updateDoc(doc(documentRef, localStorage.getItem('uid')), {
+          books: localStorage.getItem("notebook"),
+          lastEdited: serverTimestamp(),
+          lastBook: localStorage.getItem("lastBook"),
+          lastPage: localStorage.getItem("lastPage"),
+          reqDelAccount: false,
+          theme: localStorage.getItem("theme")
+        })
+        localStorage.removeItem('reqDelAccount')
+      }
     }
   }
-  alert("By the way the deleteing process is currently manually done so it will take longer than 24 hours (upto a month)")
 })
 document.getElementById("save-btn").addEventListener("click", () => {
   updateDb()
+})
+document.getElementById("dl-data").addEventListener("click", () => {
+  let data = localStorage.getItem("notebook")
+  let key = Math.random().toString(36).substring(2, 12)
+  let encrypted = aes.encrypt(data, key).toString()+"|"+key
+  let blob = new Blob([encrypted], {type: "text/plain;charset=utf-8"})
+  //download file
+  let dl = document.createElement('a')
+  dl.href = URL.createObjectURL(blob)
+  dl.download = "notebook.save"
+  dl.click()
+})
+document.getElementById("ul-data").addEventListener("click", () => {
+  document.getElementById("file-input").click()
+  document.getElementById("file-input").addEventListener("change", () => {
+    let file = document.getElementById("file-input").files[0]
+    if (file) {
+      let reader = new FileReader()
+      reader.onload = (e) => {
+        let data = e.target.result
+        let dataArr = data.split("|")
+        console.log(dataArr)
+        let decrypted = aes.decrypt(dataArr[0], dataArr[1])
+        //convert to utf8
+        decrypted = decrypted.toString(enc.Utf8)
+        console.log(decrypted)
+        localStorage.setItem("notebook", decrypted)
+        updateUiCode(localStorage.getItem("lastBook"), localStorage.getItem("lastPage"))
+      }
+      reader.readAsText(file)
+    }
+  })
+  document.getElementById("file-input").removeEventListener("change", () => {})
 })

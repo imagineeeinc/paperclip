@@ -21,7 +21,8 @@
     <link rel="apple-touch-icon" href="../favicon/apple-icon-180.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
   </head>
-  <body>
+  <body class="light">
+    <input type="file" id="file-input" style="display: none;">
     <div id="topbar">
       <button class="material-icons" id="menu-btn">
         menu
@@ -91,7 +92,7 @@
         </header>
         <div id="settings-content">
           <section>
-            <h2>Accounts</h2>
+            <h2>Account</h2>
             <div id="no-signin">
               You are not signed in.
               <br>
@@ -109,13 +110,22 @@
             </div> 
           </section>
           <section>
-            <h2>Data</h2>
-            <button id="del-all">Delete All data</button>
-            <button id="req-del-account" class="auth-obj">Request Delete Account</button>
+            <h2>Themes</h2>
+            <button class="theme-btn" data-theme="light" style="background-color: white;color: black;">Light</button>
+            <button class="theme-btn" data-theme="dark" style="background-color: rgb(4, 12, 15);color: white;">Dark</button>
+            <button class="theme-btn" data-theme="black" style="background-color: black;color: white;">Black</button>
+            <button class="theme-btn" data-theme="system">System Default</button>
           </section>
           <section>
-            <h2>Themes</h2>
-            Not Implemented yet
+            <h2>Data</h2>
+            <h3>Backup</h3>
+            <button id="dl-data">Download all Data</button>
+            <button id="ul-data" disabled>Restore all Data</button>
+            <section style="border: 1px solid crimson;border-radius: 10px;background-color: rgba(220, 20, 60, 0.064);">
+              <h3>Erasing</h3>
+              <button id="del-all" style="border: 1px solid crimson;">Delete All data</button>
+              <button id="req-del-account" class="auth-obj" style="border: 1px solid crimson;">Request Delete Account</button>
+            </section>
           </section>
         </div>
       </div>

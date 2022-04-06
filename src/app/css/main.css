@@ -1,17 +1,47 @@
 @import url('./modal.css');
 :root {
 	font-family: 'Nunito', sans-serif;
+	font-size: large;
+}
+body[data-theme=light] {
 	--background: rgb(240, 248, 255);
 	--color: rgb(0, 7, 10);
 	--accent: rgb(0, 59, 70);
-	--white: rgb(255, 255, 255);
-	background-color: var(--background);
-	color: var(--color);
-	font-size: large;
+	--white: var(--background);
+}
+body[data-theme=dark] {
+	--background: rgb(10, 19, 28);
+	--color: rgb(195, 203, 207);
+	--accent: rgb(0, 77, 90);
+	--white: rgb(21, 21, 21);
+}
+body[data-theme=black] {
+	--background: rgb(0, 0, 0);
+	--color: rgb(199, 199, 199);
+	--accent: rgb(0, 108, 128);
+	--white: rgb(0, 0, 0);
+}
+@media (prefers-color-scheme: light) {
+  body[data-theme=system] {
+		--background: rgb(240, 248, 255);
+		--color: rgb(0, 7, 10);
+		--accent: rgb(0, 59, 70);
+		--white: var(--background);
+	}
+}
+@media (prefers-color-scheme: dark) {
+  body[data-theme=system] {
+		--background: rgb(10, 19, 28);
+		--color: rgb(195, 203, 207);
+		--accent: rgb(0, 77, 90);
+		--white: rgb(21, 21, 21);
+	}
 }
 body {
 	margin: 0;
 	padding: 0;
+	background-color: var(--background);
+	color: var(--color);
 	height: 100vh;
 	width: 100%;
 	opacity: 0;
@@ -53,10 +83,18 @@ button {
 	opacity: .8;
 	font-size: inherit;
 	padding: 5px;
+	cursor: pointer;
+}
+button[disabled] {
+	opacity: .7 !important;
+	box-shadow: none !important;
+	background-color: var(--background) !important;
+	color: var(--color) !important;
+	cursor: not-allowed;
 }
 button:hover, button:focus {
 	opacity: 1;
-	box-shadow: 3px 3px var(--color);
+	box-shadow: 3px 3px rgb(26, 26, 26);
 }
 button:active {
 	border: 1px solid var(--accent) !important;
@@ -66,7 +104,7 @@ button:active {
 input[type="text"] {
 	border: none;
 	border-bottom: 2px solid var(--accent);
-	background-color: var(--white);
+	background-color: var(--background);
 	color: var(--color);
 	font-size: large;
 	height: 20px;
@@ -76,14 +114,14 @@ input[type="text"] {
 }
 input[type="text"]:focus, select:focus {
 	border: 2px solid var(--accent) !important;
-	box-shadow: 3px 3px var(--color);
+	box-shadow: 3px 3px rgb(26, 26, 26);
 	border-radius: 5px;
 }
 
 #topbar {
 	padding: 10px;
-	background-color: var(--white);
-	filter: drop-shadow(0px 0px 3px var(--color));
+	background-color: var(--background);
+	filter: drop-shadow(0px 0px 3px black);
 	height: 30px;
 	user-select: none;
 }
@@ -99,10 +137,10 @@ input[type="text"]:focus, select:focus {
 	display: inline-block;
 	font-size: 15px;
 	font-weight: bold;
-	color: var(--color);
-    background: springgreen;
-    border-radius: 10px;
-    padding: 5px;
+	color: white;
+	background: springgreen;
+	border-radius: 10px;
+	padding: 5px;
 	margin-left: 10px;
 	transform: translate(0, -15px);
 }
@@ -133,12 +171,12 @@ input[type="text"]:focus, select:focus {
 }
 
 #editor-box {
-	background: var(--white);
+	background: var(--background);
 	position: absolute;
 	margin: 20px;
 	padding: 10px;
 	border-radius: 10px;
-	filter: drop-shadow(0px 25px 20px var(--color));
+	filter: drop-shadow(0px 25px 20px black);
 	right: 0;
 	top: 50px;
 	width: 65%;
@@ -149,6 +187,8 @@ input[type="text"]:focus, select:focus {
 	height: calc(100% - 50px);
 	overflow-y: auto;
 	font-family: inherit;
+	border: 1px solid rgba(43, 43, 43, 0.216) !important;
+	border-radius: 5px;
 }
 .ql-snow {
 	border: none !important;
@@ -166,9 +206,12 @@ input[type="text"]:focus, select:focus {
 	font: inherit;
 	font-size: small;
 	padding: 5px;
-	border: none;
+	border: 1px solid rgb(117, 117, 117);
 	height: 30px;
 	width: calc(100% - 75px);
+	background: var(--background);
+	color: var(--color);
+	cursor: pointer;
 }
 #book-name {
 	width: calc(100% - 30px);
@@ -191,7 +234,7 @@ input[type="text"]:focus, select:focus {
 #tree-view > li:hover {
 	background-color: var(--accent);
 	color: var(--background);
-	box-shadow: 5px 5px var(--color);
+	box-shadow: 5px 5px rgb(26, 26, 26);
 }
 #tree-view > li:active {
 	background-color: var(--color);
@@ -214,11 +257,12 @@ input[type="text"]:focus, select:focus {
 	left: 20px;
 	padding: 10px;
 	border-radius: 10px;
-	background-color: var(--white);
-	box-shadow: 0 0 10px var(--color);
+	background-color: var(--background);
+	filter: drop-shadow(0 0 10px black);
+	user-select: none;
 }
 #panel:hover {
-	box-shadow: 6px 6px var(--color);
+	box-shadow: 4px 4px rgb(26, 26, 26);
 }
 @media screen and (min-width: 751px) {
 	#tree-view {
@@ -280,6 +324,7 @@ input[type="text"]:focus, select:focus {
 
 #signin-google {
 	background-color: cornflowerblue;
+	color: white;
 }
 #signin-github {
 	background-color: black;

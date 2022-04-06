@@ -10,7 +10,8 @@
 	width: calc(100% - 45px);
 	height: calc(100% - 45px);
 	z-index: 100;
-	box-shadow: 0 0  200px var(--color);
+	box-shadow: 0 0  200px rgb(26,26,26);
+	overflow-y: auto;	
 }
 .modal.is-open {
   display: block;
@@ -40,4 +41,7 @@ section:not(:last-child) {
 	font-weight: bold;
 	color: var(--color);
 	text-align: center;
+}
+.modal button {
+	margin: 5px;
 }

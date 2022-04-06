@@ -8,13 +8,30 @@ function updateUi(book, page) {
 }
 updateUiCodeFn((b,p) => {folder=JSON.parse(localStorage.getItem("notebook"));updateUi(b,p)})
 window.updateUi = updateUi
+
+if (localStorage.getItem('theme')) {
+	document.body.dataset.theme = localStorage.getItem('theme')
+} else {
+	localStorage.setItem('theme', 'light')
+}
+
 import MicroModal from 'micromodal';
 MicroModal.init();
 
 window.onload = () => document.body.style.opacity = 1
 
 var edit = true
+
 var menuOpen = false
+function editorOpen(l) {
+	if (l) {
+		document.getElementById("editor-box").classList.add("move-side")
+		menuOpen = true
+	} else {
+		document.getElementById("editor-box").classList.remove("move-side")
+		menuOpen = false
+	}
+}
 
 var folder = {}
 var curPage = 0
@@ -67,15 +84,12 @@ function switchPage(page) {
 	curPage = page
 	localStorage.setItem('lastPage', page)
 	setContents(folder[curBook][curPage].data)
-    if (menuOpen == true) {
-        document.getElementById("editor-box").classList.toggle("move-side")
-        menuOpen = false
-    }
-	editorFocus()
+  editorOpen(false)
 	document.getElementById('cur-note').value = folder[curBook][curPage].name
 	document.getElementById('cur-note').dataset.pre = folder[curBook][curPage].name
 	if (folder[curBook].length != 1) document.querySelector('.selected-page').classList.toggle('selected-page')
 	document.querySelector('.tree-item[data-num="' + page + '"]').classList.toggle('selected-page')
+	editorFocus()
 }
 function updateTree() {
 	tree.innerHTML = ''
@@ -171,13 +185,11 @@ changeHandler((eventName, ...args)=>{
 	}
 })
 setInterval(() => localStorage.setItem('notebook', JSON.stringify(folder)), 5000)
-
 document.getElementById("menu-btn").addEventListener('click', () => {
-	document.getElementById("editor-box").classList.toggle("move-side")
-	menuOpen = !menuOpen
+	editorOpen(!menuOpen)
 })
 document.getElementById("settings-btn").addEventListener('click', () => {
-	document.getElementById("editor-box").classList.toggle("move-side")
+	editorOpen(false)
 	MicroModal.show('settings')
 })
 document.getElementById("edit-btn").addEventListener('click', () => {
@@ -189,6 +201,7 @@ document.getElementById("edit-btn").addEventListener('click', () => {
 	} else {
 		document.getElementById("edit-btn").innerHTML = "edit"
 	}
+	editorOpen(false)
 })
 document.getElementById("signin-google").addEventListener('click', () => {
 	signin('google')
@@ -198,4 +211,10 @@ document.getElementById("signin-github").addEventListener('click', () => {
 })
 document.getElementById("signout-btn").addEventListener('click', () => {
 	signout()
+})
+document.querySelectorAll(".theme-btn").forEach(btn => {
+	btn.addEventListener('click', () => {
+		localStorage.setItem('theme', btn.dataset.theme)
+		document.body.dataset.theme = btn.dataset.theme
+	})
 })

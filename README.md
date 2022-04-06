@@ -1,2 +1,3 @@
+![logo](src/img/paperclip.png)
 # paperclip
-a notepad app
+A feature Rich Notebook app

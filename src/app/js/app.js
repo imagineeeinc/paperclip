@@ -1,6 +1,25 @@
+import { registerSW } from 'virtual:pwa-register'
+const intervalMS = 60 * 60 * 1000
+
+//if dev mode in vite dont register service worker
+if (import.meta.env.PROD) {
+	const updateSW = registerSW({
+		onRegistered(r) {
+			r && setInterval(() => {
+				r.update()
+			}, intervalMS)
+		},
+		onNeedRefresh() {
+			if (confirm('A new version of this app is available. Refresh?')) {updateSW()}
+		},
+		onOfflineReady() {},
+	})
+}
+
 import '../css/main.css'
 import {setContents, getContents, changeHandler, editorFocus, editMode} from './editor.js'
 import {signin, signout, updateDb, updateUiCodeFn} from './backend.js'
+//import {setModalClass, ask, getAns, tell} from './modal.js'
 
 function updateUi(book, page) {
 	changeNotebook(book)
@@ -17,7 +36,8 @@ if (localStorage.getItem('theme')) {
 
 import MicroModal from 'micromodal';
 MicroModal.init();
-
+//setModalClass(MicroModal)
+//tell('Welcome to the Notebook!', 'info')
 window.onload = () => document.body.style.opacity = 1
 
 var edit = true
@@ -37,10 +57,12 @@ var folder = {}
 var curPage = 0
 var curBook = 'default book'
 window.onunload = () => {
-	localStorage.setItem('lastBook', curBook)
-	localStorage.setItem('lastPage', curPage)
-	localStorage.setItem('notebook', JSON.stringify(folder))
-	updateDb()
+	if (sessionStorage.getItem('passUnloadSave') !== 'true') {
+		localStorage.setItem('lastBook', curBook)
+		localStorage.setItem('lastPage', curPage)
+		localStorage.setItem('notebook', JSON.stringify(folder))
+		updateDb()
+	}
 }
 var tree = document.getElementById('tree-view')
 if (localStorage.getItem('notebook')) {
@@ -189,7 +211,7 @@ document.getElementById("menu-btn").addEventListener('click', () => {
 	editorOpen(!menuOpen)
 })
 document.getElementById("settings-btn").addEventListener('click', () => {
-	editorOpen(false)
+	editorOpen(true)
 	MicroModal.show('settings')
 })
 document.getElementById("edit-btn").addEventListener('click', () => {
@@ -217,4 +239,29 @@ document.querySelectorAll(".theme-btn").forEach(btn => {
 		localStorage.setItem('theme', btn.dataset.theme)
 		document.body.dataset.theme = btn.dataset.theme
 	})
+})
+
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent the mini-infobar from appearing on mobile
+  e.preventDefault();
+  // Stash the event so it can be triggered later.
+  deferredPrompt = e;
+	// show intall button
+	document.getElementById("install-btn").classList.remove("hide")
+  // Optionally, send analytics event that PWA install promo was shown.
+  console.log(`'beforeinstallprompt' event was fired.`);
+});
+
+document.getElementById("install-btn").addEventListener('click', async () => {
+	deferredPrompt.prompt();
+	// Wait for the user to respond to the prompt
+	const { outcome } = await deferredPrompt.userChoice;
+	// Optionally, send analytics event with outcome of user choice
+	console.log(`User response to the install prompt: ${outcome}`);
+	// We've used the prompt, and can't use it again, throw it away
+	deferredPrompt = null;
+	// hide install button
+	document.getElementById("install-btn").classList.add("hide")
 })

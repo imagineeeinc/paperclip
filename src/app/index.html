@@ -21,7 +21,7 @@
     <link rel="apple-touch-icon" href="../favicon/apple-icon-180.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
   </head>
-  <body class="light">
+  <body data-theme="light">
     <input type="file" id="file-input" style="display: none;">
     <div id="topbar">
       <button class="material-icons" id="menu-btn">
@@ -78,6 +78,9 @@
       <button class="material-icons auth-obj" id="save-btn" title="Save Work">
         save
       </button>
+      <button class="material-icons hide" id="install-btn" title="Install as an app">
+        download
+      </button>
     </div>
 
     <div id="settings" aria-hidden="true" class="modal">
@@ -90,7 +93,7 @@
             close
           </button>
         </header>
-        <div id="settings-content">
+        <div id="settings-content" class="modal-content">
           <section>
             <h2>Account</h2>
             <div id="no-signin">
@@ -122,14 +125,35 @@
           <section>
             <h2>Data</h2>
             <h3>Backup</h3>
+            Not Perfect (still in beta)<br>
             <button id="dl-data">Download all Data</button>
-            <button id="ul-data" disabled>Restore all Data</button>
+            <button id="ul-data">Restore all Data</button>
             <section style="border: 1px solid crimson;border-radius: 10px;background-color: rgba(220, 20, 60, 0.064);">
               <h3>Erasing</h3>
               <button id="del-all" style="border: 1px solid crimson;">Delete All data</button>
               <button id="req-del-account" class="auth-obj" style="border: 1px solid crimson;">Request Delete Account</button>
             </section>
           </section>
+        </div>
+      </div>
+    </div>
+    <div id="alert" aria-hidden="true" class="modal">
+      <div role="dialog" aria-modal="true" aria-labelledby="alert-title" >
+        <header>
+          <h1 class="modal-title" id="alert-title">
+            Paperclip is Saying
+          </h1>
+          <button aria-label="Close modal" class="material-icons modal__close" data-micromodal-close>
+            close
+          </button>
+        </header>
+        <div id="alert-content">
+          <div id="alert-text">
+
+          </div>
+          <input type="text" id="alert-input">
+          <button id="alert-cancel">Cancel</button>
+          <button id="alert-btn">OK</button>
         </div>
       </div>
     </div>

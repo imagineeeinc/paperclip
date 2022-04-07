@@ -3,9 +3,6 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
 import { getFirestore, collection, query, where, setDoc, doc, getDoc, updateDoc, serverTimestamp, enableIndexedDbPersistence } from "firebase/firestore";
-
-import * as aes from 'crypto-js/aes'
-import * as enc from 'crypto-js/enc-utf8'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -43,6 +40,13 @@ export var signin = (e) => {
       // The signed-in user info.
       const user = result.user;
       // ...
+      //ask would you like to merge currnent local data with the data from the cloud
+      if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
+        let ask = confirm('Would you like to merge your current local data with the data from the cloud?')
+        if (!ask) {
+          sessionStorage.setItem('dontMergeLocal', true)
+        }
+      }
     }).catch((error) => {
       // Handle Errors here.
       const errorCode = error.code;
@@ -63,6 +67,12 @@ export var signin = (e) => {
       // The signed-in user info.
       const user = result.user;
       // ...
+      if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
+        let ask = confirm('Would you like to merge your current local data with the data from the cloud?')
+        if (!ask) {
+          sessionStorage.setItem('dontMergeLocal', true)
+        }
+      }
     }).catch((error) => {
       // Handle Errors here.
       const errorCode = error.code;
@@ -79,6 +89,12 @@ export var signin = (e) => {
   }
 }
 export var signout = () => {
+  let ask = confirm("Would you like to delete your local data once signed out?")
+  if(ask) {
+    localStorage.clear()
+    sessionStorage.setItem('passUnloadSave', true)
+    location.reload()
+  }
   auth.signOut()
 }
 var updateUiCode = (b, p) => {
@@ -127,14 +143,19 @@ auth.onAuthStateChanged(async user => {
         localStorage.setItem('lastBook', docSnap.data().lastBook)
       }
       let offline = localStorage.getItem("notebook")
-      if (online !== offline) {
-        let ask = confirm("You have a different notebook online and offline. Would you like to overwrite the offline copy with the online one?")
-        if (ask) {
-          let newOne = {...JSON.parse(offline), ...JSON.parse(online)}
-          localStorage.setItem("notebook", JSON.stringify(newOne))
-        } else {
-          let newOne = {...JSON.parse(online), ...JSON.parse(offline)}
-          localStorage.setItem("notebook", JSON.stringify(newOne))
+      if (sessionStorage.getItem('dontMergeLocal') === 'true') {
+        localStorage.setItem('notebook', online)
+        sessionStorage.removeItem('dontMergeLocal')
+      } else {
+        if (online !== offline) {
+          let ask = confirm("You have a different notebook online and offline. Would you like to merge the offline copy with the online one? (This can overwrite some data)")
+          if (ask) {
+            let newOne = {...JSON.parse(offline), ...JSON.parse(online)}
+            localStorage.setItem("notebook", JSON.stringify(newOne))
+          } else {
+            let newOne = {...JSON.parse(online), ...JSON.parse(offline)}
+            localStorage.setItem("notebook", JSON.stringify(newOne))
+          }
         }
       }
       localStorage.setItem('lastPage', docSnap.data().lastPage)
@@ -159,16 +180,41 @@ auth.onAuthStateChanged(async user => {
         localStorage.setItem("lastNotebook", localStorage.getItem("notebook"))
       });
     } else {
-      setDoc(doc(documentRef, user.uid), {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        books: btoa(localStorage.getItem("notebook")),
-        lastEdited: serverTimestamp(),
-        lastBook: btoa(localStorage.getItem("lastBook")),
-        lastPage: localStorage.getItem("lastPage"),
-        theme: localStorage.getItem("theme")
-      })
+      if (sessionStorage.getItem('dontMergeLocal') !== 'true') {
+        setDoc(doc(documentRef, user.uid), {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          books: btoa(localStorage.getItem("notebook")),
+          lastEdited: serverTimestamp(),
+          lastBook: btoa(localStorage.getItem("lastBook")),
+          lastPage: localStorage.getItem("lastPage"),
+          theme: localStorage.getItem("theme")
+        })
+      } else {
+        let defaultBook = {
+          "default book": [
+            {
+              name: "untitled",
+              data: {ops: [{ insert: 'Type', attributes: { bold: true } },{ insert: ' to ' },{ insert: 'get started ...', attributes: { italic: true } }]}
+            }	
+          ]
+        }
+        localStorage.setItem('notebook', JSON.stringify(defaultBook))
+        localStorage.setItem('lastBook', 'default book')
+        localStorage.setItem('lastPage', 0)
+        setDoc(doc(documentRef, user.uid), {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          books: btoa(localStorage.getItem("notebook")),
+          lastEdited: serverTimestamp(),
+          lastBook: btoa('default book'),
+          lastPage: '0',
+          theme: 'light'
+        })
+        location.reload()
+      }
     }
     setInterval(()=>{
       updateDb()
@@ -242,9 +288,14 @@ document.getElementById("save-btn").addEventListener("click", () => {
 })
 document.getElementById("dl-data").addEventListener("click", () => {
   let data = localStorage.getItem("notebook")
-  let key = Math.random().toString(36).substring(2, 12)
-  let encrypted = aes.encrypt(data, key).toString()+"|"+key
-  let blob = new Blob([encrypted], {type: "text/plain;charset=utf-8"})
+  data = JSON.parse(data)
+  data = {
+    lastBook: localStorage.getItem("lastBook"),
+    lastPage: localStorage.getItem("lastPage"),
+    data: data
+  }
+  data = JSON.stringify(data)
+  let blob = new Blob([data], {type: "text/plain;charset=utf-8"})
   //download file
   let dl = document.createElement('a')
   dl.href = URL.createObjectURL(blob)
@@ -259,13 +310,12 @@ document.getElementById("ul-data").addEventListener("click", () => {
       let reader = new FileReader()
       reader.onload = (e) => {
         let data = e.target.result
-        let dataArr = data.split("|")
-        console.log(dataArr)
-        let decrypted = aes.decrypt(dataArr[0], dataArr[1])
-        //convert to utf8
-        decrypted = decrypted.toString(enc.Utf8)
-        console.log(decrypted)
-        localStorage.setItem("notebook", decrypted)
+        data = JSON.parse(data)
+        localStorage.setItem("notebook", JSON.stringify(data.data))
+        localStorage.setItem("lastBook", data.lastBook)
+        localStorage.setItem("lastPage", data.lastPage)
+        sessionStorage.setItem('passUnloadSave', true)
+        location.reload()
         updateUiCode(localStorage.getItem("lastBook"), localStorage.getItem("lastPage"))
       }
       reader.readAsText(file)

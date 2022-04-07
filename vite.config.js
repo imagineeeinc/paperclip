@@ -1,3 +1,4 @@
+var { VitePWA } = require('vite-plugin-pwa')
 const { resolve } = require('path')
 module.exports = {
 	base: '/',
@@ -13,5 +14,14 @@ module.exports = {
         app: resolve(__dirname, 'src/app/index.html')
       }
     }
-  }
+  },
+	plugins: [
+    VitePWA({
+			registerType: 'autoUpdate',
+      workbox: {
+        cleanupOutdatedCaches: false,
+				globPatterns: ["**/*.{js,css,html,png,svg,jpg,jpeg,gif,json,woff,woff2,ttf,eot}"],
+      }  
+    })
+  ]
 }

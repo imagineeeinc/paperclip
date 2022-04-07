@@ -7,7 +7,7 @@
   "orientation": "portrait-primary",
   "scope": "/",
   "short_name": "Paperclip",
-  "start_url": "/app/",
+  "start_url": "https://paper-clip.vercel.app/app/",
   "theme_color": "#003a46",
   "categories": [],
   "screenshots": [],

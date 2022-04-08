@@ -13,25 +13,25 @@
   "screenshots": [],
   "icons": [
     {
-      "src": "../favicon/manifest-icon-192.maskable.png",
+      "src": "./favicon/manifest-icon-192.maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "../favicon/manifest-icon-192.maskable.png",
+      "src": "./favicon/manifest-icon-192.maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "../favicon/manifest-icon-512.maskable.png",
+      "src": "./favicon/manifest-icon-512.maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "../favicon/manifest-icon-512.maskable.png",
+      "src": "./favicon/manifest-icon-512.maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

@@ -3,7 +3,7 @@
   "description": "A feature rich notebook app",
   "dir": "ltr",
   "display": "standalone",
-  "name": "PaperClip Notebook App",
+  "name": "Paperclip Notebook App",
   "orientation": "portrait-primary",
   "scope": "/",
   "short_name": "Paperclip",

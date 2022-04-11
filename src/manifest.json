@@ -11,6 +11,7 @@
   "theme_color": "#003a46",
   "categories": [],
   "screenshots": [],
+  "shortcuts": [],
   "icons": [
     {
       "src": "../favicon/manifest-icon-192.maskable.png",
@@ -36,6 +37,5 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ],
-  "shortcuts": []
+  ]
 }

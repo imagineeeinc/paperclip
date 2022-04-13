@@ -16,6 +16,10 @@ button {
 a {
   color: slateblue;
 }
+* {
+  outline: none;
+  transition-duration: .2s;
+}
 header {
   font-size: x-large;
   padding: 50px;
@@ -41,7 +45,7 @@ header {
   padding: 10px;
 }
 #start:hover {
-  background-color: rgb(235, 255, 245);
+  background-color: rgb(81, 255, 168);
 }
 #main-screenshot {
   position: absolute;

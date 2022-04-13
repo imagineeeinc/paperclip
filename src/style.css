@@ -1,8 +1,93 @@
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600&display=swap');
+:root {
+  font-family: 'Nunito', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+}
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: rgb(235, 255, 245);
+}
+button {
+  cursor: pointer;
+}
+header {
+  font-size: x-large;
+  padding: 50px;
+  padding-top: 25vh;
+  height: 100vh;
+  width: 100%;
+  z-index: 10;
+  background-color: rgb(235, 255, 245);
+}
+#intro {
+  font-size: 50px;
+  display: inline-block;
+  width: 50%;
+}
+#start {
+  font-size: xx-large;
+  font-family: inherit;
+  display: inline-block;
+  text-align: right;
+  background-color: springgreen;
+  border: none;
+  border-radius: 20px;
+  padding: 10px;
+}
+#main-screenshot {
+  position: absolute;
+  display: inline-block;
+  width: 50%;
+  background-image: url('./img/main-screenshot.png');
+  background-size: cover;
+  background-position: center;
+  aspect-ratio: 1024/656;
+  border-radius: 10px;
+  border: 1px solid black;
+  box-shadow: 10px 10px black;
+}
+nav {
+  height: 50px;
+  position: fixed;
+  top:0;left:0;
+  font-size: 40px;
+  width: 100%;
+  background-color: rgb(235, 255, 245);
+  filter: drop-shadow(0px 0px 5px rgb(0, 0, 0));
+  z-index: 5;
+}
+nav > *:not(img) {
+  display: inline-block;
+  margin: 0 10px;
+  transform: translate(0, -10px);
+}
+#main-img {
+  height: 100%;
+}
+section {
+  height: 100vh;
+  width: 100%;
+  padding: 50px;
+}
+section .info {
+  width: 50%;
+  font-size: x-large;
+}
+section .img {
+  position: absolute;
+  right: 0;
+  display: inline-block;
+  width: 50%;
+  border-radius: 10px;
+  border: 1px solid black;
+  box-shadow: 10px 10px black;
+}
+#edit-pro {
+  background-image: url('./img/edit-pro.png');
+  background-size: cover;
+  background-position: center;
+  aspect-ratio: 879/144;
 }

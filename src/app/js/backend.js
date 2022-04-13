@@ -241,14 +241,17 @@ auth.onAuthStateChanged(async user => {
 document.getElementById("del-all").addEventListener("click", () => {
   let ask = confirm("Are you sure you want to delete all your data? This cannot be undone with no chance of recovering.")
   if (ask) {
+    if (auth.currentUser) {
+      deleteDoc(doc(documentRef, auth.currentUser.uid))
+    }
+    sessionStorage.setItem('passUnloadSave', true)
+    sessionStorage.setItem('noAutoSave', true)
     localStorage.removeItem("notebook", "")
     localStorage.removeItem("lastBook", "")
     localStorage.removeItem("lastPage", "")
     localStorage.removeItem("lastNotebook", "")
+    location.reload()
     //delete of firbase if signed in
-    if (auth.currentUser) {
-      deleteDoc(doc(documentRef, auth.currentUser.uid))
-    }
   }
 })
 document.getElementById("req-del-account").addEventListener("click", () => {

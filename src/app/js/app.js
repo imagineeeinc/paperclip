@@ -94,6 +94,18 @@ if (localStorage.getItem('notebook')) {
 	localStorage.setItem('notebook', JSON.stringify(folder))
 	location.reload()
 }
+window.addEventListener('DOMContentLoaded', () => {
+	const parsedUrl = new URL(window.location);
+	var searchParam = parsedUrl.searchParams
+	if (searchParam.get('title')) {
+		folder[curBook].push({
+			name: searchParam.get('title'),
+			data: {ops: [{ insert: searchParam.get('body') }]}
+		})
+		curPage = Number.parseInt(curPage)+1
+		updateUi(curBook, curPage)
+	}
+})
 
 function changeNotebook(book) {
 	curBook = book
@@ -206,7 +218,12 @@ changeHandler((eventName, ...args)=>{
 		folder[curBook][curPage].data = getContents()
 	}
 })
-setInterval(() => localStorage.setItem('notebook', JSON.stringify(folder)), 5000)
+setInterval(() => {
+	if (sessionStorage.getItem('noAutoSave') !== 'true') {
+		localStorage.setItem('notebook', JSON.stringify(folder))
+	}
+}, 5000)
+
 document.getElementById("menu-btn").addEventListener('click', () => {
 	editorOpen(!menuOpen)
 })
@@ -264,4 +281,25 @@ document.getElementById("install-btn").addEventListener('click', async () => {
 	deferredPrompt = null;
 	// hide install button
 	document.getElementById("install-btn").classList.add("hide")
+})
+
+let touchstartX = 0
+let touchendX = 0
+
+function handleGesture() {
+  if (touchendX - touchstartX > 100) {editorOpen(true)}
+	if (touchendX - touchstartX < -100) {editorOpen(false)}
+}
+
+document.getElementById("editor-box").addEventListener('touchstart', e => {
+  touchstartX = e.changedTouches[0].screenX
+})
+
+document.getElementById("editor-box").addEventListener('touchend', e => {
+  touchendX = e.changedTouches[0].screenX
+  handleGesture()
+})
+
+document.getElementById("editor-box").addEventListener('click', e => {
+	editorOpen(false)
 })

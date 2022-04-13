@@ -12,6 +12,14 @@
   "categories": [],
   "screenshots": [],
   "shortcuts": [],
+  "share_target": {
+    "action": "/app/",
+    "method": "GET",
+    "params": {
+      "title": "page",
+      "text": "body"
+    }
+  },
   "icons": [
     {
       "src": "../favicon/manifest-icon-192.maskable.png",

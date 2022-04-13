@@ -6,7 +6,7 @@
     "dev": "vite --host",
     "build": "vite build --emptyOutDir && node copyFavicon.js",
     "preview": "vite preview",
-    "gen:fav": "cd src && pwa-asset-generator ./img/paperclip.png ./favicon --background #00000000 -p 0 -o false -m ./manifest.json -i ./app/index.html -t png -f true --mstile true -d true --log -c"
+    "gen:fav": "cd src && pwa-asset-generator ./img/paperclip.png ./favicon --background #00000000 -o false -m ./manifest.json -i ./app/index.html -t png -f true --mstile true -d true --log -c"
   },
   "devDependencies": {
     "fs-extra": "^10.0.1",

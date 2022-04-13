@@ -13,6 +13,9 @@ body {
 button {
   cursor: pointer;
 }
+a {
+  color: slateblue;
+}
 header {
   font-size: x-large;
   padding: 50px;
@@ -36,6 +39,9 @@ header {
   border: none;
   border-radius: 20px;
   padding: 10px;
+}
+#start:hover {
+  background-color: rgb(235, 255, 245);
 }
 #main-screenshot {
   position: absolute;
@@ -76,6 +82,12 @@ section .info {
   width: 50%;
   font-size: x-large;
 }
+section .info > h3 {
+  font-size: x-large;
+  font-family: inherit;
+  color: grey;
+  margin-bottom: 10px;
+}
 section .img {
   position: absolute;
   right: 0;
@@ -85,9 +97,83 @@ section .img {
   border: 1px solid black;
   box-shadow: 10px 10px black;
 }
+header > br {
+  display: none;
+}
+@media screen and (max-width: 970px) {
+  header {
+    padding-top: 100px;
+    width: 100%;
+  }
+  header > br {
+    display: block;
+  }
+  #main-screenshot {
+    position: none;
+    max-width: 500px;
+    width: 120%;
+  }
+  #intro {
+    position: none;
+    width: 80%;
+    font-size: 40px;
+  }
+  section {
+    padding: 20px;
+    height: 50vh;
+  }
+  section .info {
+    width: 100%;
+  }
+  section .img {
+    position: absolute;
+    left: 10px;
+    display: inline-block;
+    width: calc(100% - 5px) !important;
+  }
+  footer {
+    margin-top: 25vh;
+  }
+}
 #edit-pro {
   background-image: url('./img/edit-pro.png');
   background-size: cover;
   background-position: center;
-  aspect-ratio: 879/144;
+  width: 95%;
+  right: 15px;
+  aspect-ratio: 1303/156;
+  margin-top: 10px;
+}
+#books-screenshot {
+  background-image: url('./img/books.png');
+  background-size: cover;
+  background-position: center;
+  width: 50%;
+  right: 15px;
+  aspect-ratio: 495/196;
+  margin-top: 10px;
+}
+#sync-screenshot {
+  background-image: url('./img/paperclip-crossconect.png');
+  background-size: cover;
+  background-position: center;
+  width: 50%;
+  right: 5px;
+  aspect-ratio: 1023/665;
+  margin-top: 10px;
+  border: none;
+  box-shadow: none;
+}
+footer {
+  position: absolute;
+  left: 5%;
+  width: 80%;
+  padding: 50px;
+  background: rgb(118, 255, 187);
+}
+footer > h3 {
+  font-size: x-large;
+  font-family: inherit;
+  color: rgb(90, 90, 90);
+  margin-bottom: 10px;
 }

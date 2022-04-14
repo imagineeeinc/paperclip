@@ -89,13 +89,13 @@ export var signin = (e) => {
   }
 }
 export var signout = () => {
+  auth.signOut()
   let ask = confirm("Would you like to delete your local data once signed out?")
   if(ask) {
     localStorage.clear()
     sessionStorage.setItem('passUnloadSave', true)
     location.reload()
   }
-  auth.signOut()
 }
 var updateUiCode = (b, p) => {
   updateUi(b, p)

@@ -271,9 +271,9 @@ setTimeout(() => {
 			if (localStorage.getItem('signdIn') == 'true') {
 				updateDb()
 				alert("We have automatically saved your data. Sign in to the same account once you are redirected to the new site.")
-				window.location.href = "https://paper-clip.web.app/app/#autoSignIn="+localStorage.getItem('signInProvider')
+				window.open("https://paper-clip.web.app/app/#autoSignIn="+localStorage.getItem('signInProvider'))
 			} else {
-				window.location.href = "https://paper-clip.web.app/app/"
+				window.open("https://paper-clip.web.app/app/")
 			}
 		}
 	}

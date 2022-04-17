@@ -1,7 +1,7 @@
 import { registerSW } from 'virtual:pwa-register'
 const intervalMS = 60 * 60 * 1000
 
-//if dev mode in vite dont register service worker
+//PWA
 if (import.meta.env.PROD) {
 	const updateSW = registerSW({
 		onRegistered(r) {
@@ -21,41 +21,48 @@ import {setContents, getContents, changeHandler, editorFocus, editMode} from './
 import {signin, signout, updateDb, updateUiCodeFn} from './backend.js'
 //import {setModalClass, ask, getAns, tell} from './modal.js'
 
+//Update Ui
 function updateUi(book, page) {
 	changeNotebook(book)
 	switchPage(page)
 }
+var tree = document.getElementById('tree-view')
 updateUiCodeFn((b,p) => {folder=JSON.parse(localStorage.getItem("notebook"));updateUi(b,p)})
 window.updateUi = updateUi
 
+//Theme setter
 if (localStorage.getItem('theme')) {
 	document.body.dataset.theme = localStorage.getItem('theme')
 } else {
 	localStorage.setItem('theme', 'light')
 }
-
+//Micromodal setup
 import MicroModal from 'micromodal';
 MicroModal.init();
 //setModalClass(MicroModal)
 //tell('Welcome to the Notebook!', 'info')
+
+//Load page
 window.onload = () => document.body.style.opacity = 1
 
 var edit = true
 
-var menuOpen = false
-function editorOpen(l) {
-	if (l) {
-		document.getElementById("editor-box").classList.add("move-side")
-		menuOpen = true
-	} else {
-		document.getElementById("editor-box").classList.remove("move-side")
-		menuOpen = false
-	}
-}
-
+//Defaults
 var folder = {}
 var curPage = 0
 var curBook = 'default book'
+
+//Save
+changeHandler((eventName, ...args)=>{
+	if (eventName === 'text-change') {
+		folder[curBook][curPage].data = getContents()
+	}
+})
+setInterval(() => {
+	if (sessionStorage.getItem('noAutoSave') !== 'true') {
+		localStorage.setItem('notebook', JSON.stringify(folder))
+	}
+}, 5000)
 window.onunload = () => {
 	if (sessionStorage.getItem('passUnloadSave') !== 'true') {
 		localStorage.setItem('lastBook', curBook)
@@ -64,7 +71,7 @@ window.onunload = () => {
 		updateDb()
 	}
 }
-var tree = document.getElementById('tree-view')
+//Reload the date from local storage
 if (localStorage.getItem('notebook')) {
 	folder = JSON.parse(localStorage.getItem('notebook'))
 	if (localStorage.getItem('lastBook')) {
@@ -94,6 +101,9 @@ if (localStorage.getItem('notebook')) {
 	localStorage.setItem('notebook', JSON.stringify(folder))
 	location.reload()
 }
+import {editorOpen} from './modules/swipeEditior.js'
+
+// Share to script
 window.addEventListener('DOMContentLoaded', () => {
 	const parsedUrl = new URL(window.location);
 	var searchParam = parsedUrl.searchParams
@@ -107,6 +117,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	}
 })
 
+//Page Update
 function changeNotebook(book) {
 	curBook = book
 	localStorage.setItem('lastBook', book)
@@ -119,8 +130,8 @@ function switchPage(page) {
 	localStorage.setItem('lastPage', page)
 	setContents(folder[curBook][curPage].data)
   editorOpen(false)
-	document.getElementById('cur-note').value = folder[curBook][curPage].name
-	document.getElementById('cur-note').dataset.pre = folder[curBook][curPage].name
+	document.getElementById('cur-page').value = folder[curBook][curPage].name
+	document.getElementById('cur-page').dataset.pre = folder[curBook][curPage].name
 	if (folder[curBook].length != 1) document.querySelector('.selected-page').classList.toggle('selected-page')
 	document.querySelector('.tree-item[data-num="' + page + '"]').classList.toggle('selected-page')
 	editorFocus()
@@ -137,7 +148,7 @@ function updateTree() {
 			switchPage(i)
 		}
 		doc.ondblclick = () => {
-			document.getElementById("cur-note").focus()
+			document.getElementById("cur-page").focus()
 		}
 		if (curPage == i) {
 			doc.classList.toggle('selected-page')
@@ -153,19 +164,14 @@ function updateTree() {
 	}
 	document.getElementById('book-select').value = curBook
 }
-document.getElementById("cur-note").onchange = () => {
-	let pre = document.getElementById('cur-note').dataset.pre
-	let name = document.getElementById('cur-note').value
+
+//page controls
+document.getElementById("cur-page").onchange = () => {
+	let pre = document.getElementById('cur-page').dataset.pre
+	let name = document.getElementById('cur-page').value
 	folder[curBook][curPage].name = name
-	document.getElementById('cur-note').dataset.pre = name
+	document.getElementById('cur-page').dataset.pre = name
 	updateUi(curBook, curPage)
-}
-document.getElementById("book-name").onchange = () => {
-	let pre = document.getElementById('book-name').dataset.pre
-	let name = document.getElementById('book-name').value
-	folder[name] = folder[pre]
-	delete folder[pre]
-	updateUi(name, Object.keys(folder[name])[0])
 }
 document.getElementById("add-page-btn").onclick = () => {
 	let name = prompt('Enter the name of the new page:')
@@ -187,9 +193,18 @@ document.getElementById("del-page-btn").onclick = () => {
 		alert("You can't delete the last page")
 	}
 }
+
+//book controls
 document.getElementById("book-select").onchange = () => {
 	let book = document.getElementById('book-select').value
 	updateUi(book, 0)
+}
+document.getElementById("book-name").onchange = () => {
+	let pre = document.getElementById('book-name').dataset.pre
+	let name = document.getElementById('book-name').value
+	folder[name] = folder[pre]
+	delete folder[pre]
+	updateUi(name, Object.keys(folder[name])[0])
 }
 document.getElementById("book-select").ondblclick = () => {
 	document.getElementById("book-name").focus()
@@ -213,19 +228,9 @@ document.getElementById("del-book").onclick = () => {
 	}
 }
 
-changeHandler((eventName, ...args)=>{
-	if (eventName === 'text-change') {
-		folder[curBook][curPage].data = getContents()
-	}
-})
-setInterval(() => {
-	if (sessionStorage.getItem('noAutoSave') !== 'true') {
-		localStorage.setItem('notebook', JSON.stringify(folder))
-	}
-}, 5000)
-
+//Buttons
 document.getElementById("menu-btn").addEventListener('click', () => {
-	editorOpen(!menuOpen)
+	editorOpen('opposite')
 })
 document.getElementById("settings-btn").addEventListener('click', () => {
 	editorOpen(true)
@@ -251,55 +256,32 @@ document.getElementById("signin-github").addEventListener('click', () => {
 document.getElementById("signout-btn").addEventListener('click', () => {
 	signout()
 })
-document.querySelectorAll(".theme-btn").forEach(btn => {
-	btn.addEventListener('click', () => {
-		localStorage.setItem('theme', btn.dataset.theme)
-		document.body.dataset.theme = btn.dataset.theme
-	})
-})
+import './modules/installer.js'
+import './modules/theme.js'
 
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent the mini-infobar from appearing on mobile
-  e.preventDefault();
-  // Stash the event so it can be triggered later.
-  deferredPrompt = e;
-	// show intall button
-	document.getElementById("install-btn").classList.remove("hide")
-  // Optionally, send analytics event that PWA install promo was shown.
-  console.log(`'beforeinstallprompt' event was fired.`);
-});
-
-document.getElementById("install-btn").addEventListener('click', async () => {
-	deferredPrompt.prompt();
-	// Wait for the user to respond to the prompt
-	const { outcome } = await deferredPrompt.userChoice;
-	// Optionally, send analytics event with outcome of user choice
-	console.log(`User response to the install prompt: ${outcome}`);
-	// We've used the prompt, and can't use it again, throw it away
-	deferredPrompt = null;
-	// hide install button
-	document.getElementById("install-btn").classList.add("hide")
-})
-
-let touchstartX = 0
-let touchendX = 0
-
-function handleGesture() {
-  if (touchendX - touchstartX > 100) {editorOpen(true)}
-	if (touchendX - touchstartX < -100) {editorOpen(false)}
+setTimeout(() => {
+	if (window.location.href.indexOf("vercel.app") > -1) {
+		let ask = confirm('Paperclip has moved to a new domain. Would you like us to auto switch to the new url.\n\nAlso if you have installed the app from the browser uninstall the old one and install the new one.')
+		if (ask) {
+			if (navigator.serviceWorker.controller) {
+				navigator.serviceWorker.getRegistration().then(reg => {
+					reg.unregister()
+				})
+			}
+			if (localStorage.getItem('signdIn') == 'true') {
+				updateDb()
+				alert("We have automatically saved your data. Sign in to the same account once you are redirected to the new site.")
+				window.location.href = "https://paper-clip.web.app/app/#autoSignIn="+localStorage.getItem('signInProvider')
+			} else {
+				window.location.href = "https://paper-clip.web.app/app/"
+			}
+		}
+	}
+}, 2000)
+if (window.location.href.indexOf('autoSignIn=google') > -1) {
+	signin('google')
+	window.location.href = window.location.href.replace('#autoSignIn=google.com', '')
+} else if(window.location.href.indexOf('autoSignIn=github') > -1) {
+	signin('github')
+	window.location.href = window.location.href.replace('#autoSignIn=github.com', '')
 }
-
-document.getElementById("editor-box").addEventListener('touchstart', e => {
-  touchstartX = e.changedTouches[0].screenX
-})
-
-document.getElementById("editor-box").addEventListener('touchend', e => {
-  touchendX = e.changedTouches[0].screenX
-  handleGesture()
-})
-
-document.getElementById("editor-box").addEventListener('click', e => {
-	editorOpen(false)
-})

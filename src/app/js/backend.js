@@ -112,7 +112,8 @@ export var updateDb = () => {
       lastEdited: serverTimestamp(),
       lastBook: btoa(localStorage.getItem("lastBook")),
       lastPage: localStorage.getItem("lastPage"),
-      theme: localStorage.getItem("theme")
+      theme: localStorage.getItem("theme"),
+      loginSite: window.location.href.indexOf("web.app") > -1 ? "web.app" : window.location.href.indexOf("vercel.app") > -1 ? "vercel.app" : "null"
     })
   }
   localStorage.setItem("lastNotebook", localStorage.getItem("notebook"))
@@ -223,7 +224,8 @@ auth.onAuthStateChanged(async user => {
     document.querySelectorAll(".auth-obj").forEach(e => {
       e.classList.remove("hide")
     })
-    
+    localStorage.setItem('signInProvider', user.providerData[0].providerId)
+    localStorage.setItem('signdIn', true)
   } else {
     //select all class=auth-obj and hide them
     document.querySelectorAll(".auth-obj").forEach(e => {

@@ -140,6 +140,7 @@ function updateTree() {
 	tree.innerHTML = ''
 	let books = folder[curBook]
 	for (let i = 0; i < books.length; i++) {
+		if (!books[i]) continue 
 		let doc = document.createElement('li')
 		doc.className = 'tree-item'
 		doc.innerHTML = books[i].name

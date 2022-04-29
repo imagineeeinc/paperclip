@@ -2,6 +2,20 @@
   "hosting": {
     "site": "paper-clip",
     "public": "dist",
+    "rewrites": [
+      {
+        "source": "/",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/app/",
+        "destination": "/app/index.html"
+      },
+      {
+        "source": "/share/",
+        "destination": "/share/index.html"
+      }
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",

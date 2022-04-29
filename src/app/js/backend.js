@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
-import { getFirestore, collection, query, where, setDoc, doc, getDoc, updateDoc, serverTimestamp, enableIndexedDbPersistence } from "firebase/firestore";
+import { getFirestore, collection, setDoc, doc, getDoc, updateDoc, serverTimestamp, /* enableIndexedDbPersistence */ } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,12 +24,15 @@ const analytics = getAnalytics(app);
 
 var store = getFirestore(app)
 let documentRef
+let shareRef
 let unsubscribe
 
+// Setup Auth
 const auth = getAuth(app);
 auth.languageCode = 'en'
 var googleAuth = new GoogleAuthProvider()
 var githubAuth = new GithubAuthProvider()
+shareRef = collection(store,"shares")
 export var signin = (e) => {
   if(e === 'google') {
     signInWithPopup(auth, googleAuth)
@@ -88,6 +91,8 @@ export var signin = (e) => {
     //TODO: email signin
   }
 }
+
+//auth helper functions
 export var signout = () => {
   auth.signOut()
   let ask = confirm("Would you like to delete your local data once signed out?")
@@ -104,7 +109,7 @@ export var updateUiCodeFn = (callback) => {
   updateUiCode = callback
 }
 
-
+//Update cloud db
 export var updateDb = () => {
   if (localStorage.getItem("notebook") !== localStorage.getItem("lastNotebook")) {
     updateDoc(doc(documentRef, localStorage.getItem('uid')), {
@@ -119,8 +124,11 @@ export var updateDb = () => {
   localStorage.setItem("lastNotebook", localStorage.getItem("notebook"))
 }
 
+//on auth state chage
 auth.onAuthStateChanged(async user => {
+  //on sign in
   if (user) {
+    //basic stup
     document.getElementById("no-signin").classList.toggle("hide")
     document.getElementById("logdin").classList.toggle("hide")
     document.getElementById("user-name").innerHTML = user.displayName
@@ -132,9 +140,12 @@ auth.onAuthStateChanged(async user => {
     document.getElementById("user-provider").innerHTML = user.providerData[0].providerId
     localStorage.setItem('uid', user.uid)
 
+    //chek if online data avalible
     documentRef = collection(store,"userDocuments")
     const docSnap = await getDoc(doc(documentRef, user.uid));
+    //exsts
     if (docSnap.exists()) {
+      //ask to merge
       let online
       online = docSnap.data().books
       if (online[0] != '{') {
@@ -159,11 +170,14 @@ auth.onAuthStateChanged(async user => {
           }
         }
       }
+      //set loacal data
       localStorage.setItem('lastPage', docSnap.data().lastPage)
       localStorage.setItem('theme', docSnap.data().theme || 'light')
       document.body.dataset.theme = localStorage.getItem('theme')
+      document.querySelector('button[data-theme="' + localStorage.getItem('theme') + '"]').classList.add('active-theme')
       updateUiCode(localStorage.getItem("lastBook"), docSnap.data().lastPage)
       updateDb()
+      //setup on window close
       window.addEventListener('beforeunload', function (e) {
         if (localStorage.getItem("notebook") !== localStorage.getItem("lastNotebook")) {
           // Cancel the event
@@ -181,6 +195,9 @@ auth.onAuthStateChanged(async user => {
         localStorage.setItem("lastNotebook", localStorage.getItem("notebook"))
       });
     } else {
+      //if no cloud data
+
+      //dont merge local data with oneline
       if (sessionStorage.getItem('dontMergeLocal') !== 'true') {
         setDoc(doc(documentRef, user.uid), {
           uid: user.uid,
@@ -193,6 +210,7 @@ auth.onAuthStateChanged(async user => {
           theme: localStorage.getItem("theme")
         })
       } else {
+        //make fresh online data
         let defaultBook = {
           "default book": [
             {
@@ -220,13 +238,24 @@ auth.onAuthStateChanged(async user => {
     setInterval(()=>{
       updateDb()
     }, 1000*5)
+    //setup share document
+    const shareSnap = await getDoc(doc(shareRef, user.uid));
+    //dosen't exists
+    if (!shareSnap.exists()) {
+      setDoc(doc(shareRef, user.uid), {
+        uid: user.uid
+      })
+    }
 
+    //last auth bit
     document.querySelectorAll(".auth-obj").forEach(e => {
       e.classList.remove("hide")
     })
+    document.getElementById("share-btn").classList.remove("hide")
     localStorage.setItem('signInProvider', user.providerData[0].providerId)
     localStorage.setItem('signdIn', true)
   } else {
+    // sign out/ no auth
     //select all class=auth-obj and hide them
     document.querySelectorAll(".auth-obj").forEach(e => {
       e.classList.add("hide")
@@ -238,8 +267,10 @@ auth.onAuthStateChanged(async user => {
     localStorage.removeItem('uid')
     localStorage.removeItem('email')
     localStorage.removeItem('signInProvider')
+    document.getElementById("share-btn").classList.add("hide")
   }
 })
+//delete data
 document.getElementById("del-all").addEventListener("click", () => {
   let ask = confirm("Are you sure you want to delete all your data? This cannot be undone with no chance of recovering.")
   if (ask) {
@@ -253,9 +284,9 @@ document.getElementById("del-all").addEventListener("click", () => {
     localStorage.removeItem("lastPage", "")
     localStorage.removeItem("lastNotebook", "")
     location.reload()
-    //delete of firbase if signed in
   }
 })
+//delete account
 document.getElementById("req-del-account").addEventListener("click", () => {
   let ask = confirm("Are you sure you want to delete your account? THis will delete all your data and cannot be undone, with no chance of recoverd.")
   if (ask) {
@@ -288,9 +319,11 @@ document.getElementById("req-del-account").addEventListener("click", () => {
     }
   }
 })
+//save button
 document.getElementById("save-btn").addEventListener("click", () => {
   updateDb()
 })
+//backup stuff
 document.getElementById("dl-data").addEventListener("click", () => {
   let data = localStorage.getItem("notebook")
   data = JSON.parse(data)
@@ -328,3 +361,46 @@ document.getElementById("ul-data").addEventListener("click", () => {
   })
   document.getElementById("file-input").removeEventListener("change", () => {})
 })
+var reloadFolder = ()=>{}
+export var reloadState = (callback) => {reloadFolder = callback}
+//share stuff
+document.getElementById("share-link").addEventListener("click", async () => {
+  let data = localStorage.getItem("notebook")
+  data = JSON.parse(data)
+  data = data[localStorage.getItem("lastBook")][localStorage.getItem("lastPage")]
+  let nameN = data.name
+  let key
+  if (!data.shareId) {
+    data = JSON.stringify(data)
+    //generate a key
+    key = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    setDoc(doc(shareRef, auth.currentUser.uid), {
+      books: {[key]: btoa(data)}
+    }, {merge: true})
+    data = localStorage.getItem("notebook")
+    data = JSON.parse(data)
+    data[localStorage.getItem("lastBook")][localStorage.getItem("lastPage")].shareId = key
+    localStorage.setItem("notebook", JSON.stringify(data))
+    reloadFolder()
+  } else {
+    key = data.shareId
+    //check if the online one is the same as offline
+    let online = await getDoc(doc(shareRef, auth.currentUser.uid))
+    online = online.data()
+    if (online.books[key] !== btoa(JSON.stringify(data))) {
+      online = JSON.stringify(data)
+      setDoc(doc(shareRef, auth.currentUser.uid), {
+        books: {[key]: btoa(online)}
+      }, {merge: true})
+    }
+  }
+  document.getElementById('share-page-link').style.display = 'block' 
+	document.getElementById('share-page-link').innerHTML = window.location.origin + "/share/?key=" + key + "&uid=" + localStorage.getItem('uid')
+	document.getElementById('share-page-name').innerHTML = nameN
+  navigator.share({
+    title: nameN,
+    text: "Check out my page",
+    url: window.location.origin + "/share/?key=" + key + "&uid=" + auth.currentUser.uid
+  })
+})
+//TODO: add delete share

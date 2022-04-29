@@ -18,7 +18,7 @@ if (import.meta.env.PROD) {
 
 import '../css/main.css'
 import {setContents, getContents, changeHandler, editorFocus, editMode} from './editor.js'
-import {signin, signout, updateDb, updateUiCodeFn} from './backend.js'
+import {signin, signout, updateDb, updateUiCodeFn, reloadState } from './backend.js'
 //import {setModalClass, ask, getAns, tell} from './modal.js'
 
 //Update Ui
@@ -43,7 +43,7 @@ MicroModal.init();
 //tell('Welcome to the Notebook!', 'info')
 
 //Load page
-window.onload = () => document.body.style.opacity = 1
+window.onload = () => setTimeout(()=>document.body.style.opacity=1,250)
 
 var edit = true
 
@@ -64,12 +64,12 @@ setInterval(() => {
 	}
 }, 5000)
 window.onunload = () => {
-	if (sessionStorage.getItem('passUnloadSave') !== 'true') {
+	/* if (sessionStorage.getItem('passUnloadSave') !== 'true') {
 		localStorage.setItem('lastBook', curBook)
 		localStorage.setItem('lastPage', curPage)
 		localStorage.setItem('notebook', JSON.stringify(folder))
 		updateDb()
-	}
+	} */
 }
 //Reload the date from local storage
 if (localStorage.getItem('notebook')) {
@@ -135,9 +135,23 @@ function switchPage(page) {
 	if (folder[curBook].length != 1) document.querySelector('.selected-page').classList.toggle('selected-page')
 	document.querySelector('.tree-item[data-num="' + page + '"]').classList.toggle('selected-page')
 	editorFocus()
+	if (folder[curBook][curPage].shareId) {
+		document.getElementById('share-page-link').style.display = 'block' 
+		document.getElementById('share-page-link').innerHTML = window.location.origin + "/share/?key=" + folder[curBook][curPage].shareId + "&uid=" + localStorage.getItem('uid')
+		document.getElementById('share-page-name').innerHTML = folder[curBook][curPage].name
+	} else {
+		document.getElementById('share-page-link').innerHTML = ''
+		document.getElementById('share-page-name').innerHTML = ''
+		document.getElementById('share-page-link').style.display = 'none'
+	}
 }
 function updateTree() {
 	tree.innerHTML = ''
+	if (folder[curBook]) {
+	} else {
+		curBook = Object.keys(folder)[0]
+		curPage = 0
+	}
 	let books = folder[curBook]
 	for (let i = 0; i < books.length; i++) {
 		if (!books[i]) continue 
@@ -257,6 +271,10 @@ document.getElementById("signin-github").addEventListener('click', () => {
 document.getElementById("signout-btn").addEventListener('click', () => {
 	signout()
 })
+document.getElementById("share-btn").addEventListener('click', () => {
+	MicroModal.show('share')
+})
+
 import './modules/installer.js'
 import './modules/theme.js'
 
@@ -286,3 +304,6 @@ if (window.location.href.indexOf('autoSignIn=google') > -1) {
 	signin('github')
 	window.location.href = window.location.href.replace('#autoSignIn=github.com', '')
 }
+reloadState(()=>{
+	folder = JSON.parse(localStorage.getItem('notebook'))
+})

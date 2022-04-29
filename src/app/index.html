@@ -27,7 +27,6 @@
       </button>
       <div id="left-toolbar">
         <div id="app-icon"></div>
-        <div id="beta">Beta</div>
       </div>
       <div id="right-toolbar">
         <button class="material-icons" id="add-page-btn" title="Add new page">
@@ -74,6 +73,9 @@
       </button>
       <button class="material-icons auth-obj" id="save-btn" title="Save Work">
         save
+      </button>
+      <button class="material-icons auth-obj" id="share-btn" title="Share this page">
+        share
       </button>
       <button class="material-icons hide" id="install-btn" title="Install as an app">
         download
@@ -130,6 +132,27 @@
               <button id="req-del-account" class="auth-obj" style="border: 1px solid crimson;">Request Delete Account</button>
             </section>
           </section>
+        </div>
+      </div>
+    </div>
+    <div id="share" aria-hidden="true" class="modal">
+      <div role="dialog" aria-modal="true" aria-labelledby="share-title">
+        <header>
+          <h1 class="modal-title">
+            Share Menu
+          </h1>
+          <button aria-label="Close modal" class="material-icons modal__close" data-micromodal-close="">
+            close
+          </button>
+        </header>
+        <div id="share-content" class="modal-content">
+          <div id="share-page-data">
+            <span id="share-page-name"></span>
+            <br>
+            <span id="share-page-link"></span>
+          </div>
+          <button id="share-link" class="auth-obj">Share as Link</button>
+          <h5 style="color: grey;"><i>To update the old share link with latest data, click the button</i></h5>
         </div>
       </div>
     </div>

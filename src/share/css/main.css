@@ -1,0 +1,63 @@
+@import url('../../font.css');
+:root {
+	font-family: 'Nunito', sans-serif;
+	font-size: large;
+}
+* {
+	font-family: inherit;
+}
+@media (prefers-color-scheme: light) {
+  body {
+		--background: rgb(240, 248, 255);
+		--color: rgb(0, 7, 10);
+		--accent: rgb(0, 59, 70);
+		--white: var(--background);
+	}
+	#app-icon {
+		background: url('../../img/paperclip-txt.png');
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+}
+@media (prefers-color-scheme: dark) {
+  body {
+		--background: rgb(10, 19, 28);
+		--color: rgb(195, 203, 207);
+		--accent: rgb(0, 77, 90);
+		--white: rgb(21, 21, 21);
+	}
+	#app-icon {
+		background: url('../../img/paperclip-txt-dark.png');
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+}
+#app-icon {
+	aspect-ratio: 4524/1117;
+	height: 50px;
+	display: inline-block;
+}
+#name {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	font-size: xx-large;
+	height: 50px;
+}
+body {
+	background-color: var(--background);
+	color: var(--color);
+	height: 100vh;
+	overflow: hidden;
+}
+.ql-toolbar.ql-snow {
+	display: none !important;
+}
+.ql-container.ql-snow {
+	border: none !important;
+	height: calc(100% - 75px);
+}
+.ql-editor {
+	border: 1px solid var(--accent);
+	border-radius: 10px;
+}

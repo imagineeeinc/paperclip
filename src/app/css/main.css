@@ -1,5 +1,5 @@
 @import url('./modal.css');
-@import url('./font.css');
+@import url('../../font.css');
 :root {
 	font-family: 'Nunito', sans-serif;
 	font-size: large;
@@ -13,7 +13,7 @@ body[data-theme=light] {
 body[data-theme=dark] {
 	--background: rgb(10, 19, 28);
 	--color: rgb(195, 203, 207);
-	--accent: rgb(0, 77, 90);
+	--accent: rgb(0, 105, 123);
 	--white: rgb(21, 21, 21);
 }
 body[data-theme=black] {
@@ -81,6 +81,16 @@ body {
 * {
 	outline: none;
 	transition-duration: .2s;
+}
+a {
+	color: var(--accent) !important;
+	cursor: pointer;
+}
+a:hover {
+	background: var(--accent) !important;
+	color: var(--background) !important;
+	padding: 3px;
+	border-radius: 3px;
 }
 ::-webkit-scrollbar {
 	width: 10px;
@@ -175,20 +185,22 @@ input[type="text"]:focus, select:focus {
 	left:0;
 	top:0;
 }
-#cur-note {
+#cur-page {
 	font-size: 20px;
 	padding: 5px;
 	color: var(--color);
-	transform: translate(0, -5px);
+	transform: translateY(-5px);
 }
 #right-toolbar {
-	font-size: 30px;
+	font-size: 30px !important;
 	font-weight: bold;
 	color: var(--color);
 	margin-left: 10px;
 	transform: translate(0, -15px);
 	float: right;
 	font-size: 40px;
+	height: 55px;
+	padding: 10px;
 }
 
 #editor-box {
@@ -218,6 +230,9 @@ input[type="text"]:focus, select:focus {
 .ql-snow {
 	border: none !important;
 }
+.ql-tooltip {
+	z-index: 20;
+}
 
 #tree {
 	width: 25%;
@@ -237,6 +252,7 @@ input[type="text"]:focus, select:focus {
 	background: var(--background);
 	color: var(--color);
 	cursor: pointer;
+	border-radius: 5px;
 }
 #book-name {
 	width: calc(100% - 30px);
@@ -303,12 +319,13 @@ input[type="text"]:focus, select:focus {
 		height: 80px;
 	}
 	#right-toolbar {
-		transform: translate(-15px, 35px);
+		transform: translate(10px, 40px);
+		width: 100%;
 	}
-	#cur-note {
+	#cur-page {
 		font-size: medium;
 		padding: 5px;
-		width: calc(100% - 220px);
+		width: calc(100% - 210px);
 	}
 	#editor-box {
 		width: calc(100% - 55px);

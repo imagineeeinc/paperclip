@@ -14,7 +14,7 @@
 		--white: var(--background);
 	}
 	#app-icon {
-		background: url('../../img/paperclip-txt.png');
+		background: url('../../img/paperclip.png');
 		background-size: contain;
 		background-repeat: no-repeat;
 	}
@@ -27,13 +27,13 @@
 		--white: rgb(21, 21, 21);
 	}
 	#app-icon {
-		background: url('../../img/paperclip-txt-dark.png');
+		background: url('../../img/paperclip.png');
 		background-size: contain;
 		background-repeat: no-repeat;
 	}
 }
 #app-icon {
-	aspect-ratio: 4524/1117;
+	aspect-ratio: 1/1;
 	height: 50px;
 	display: inline-block;
 }

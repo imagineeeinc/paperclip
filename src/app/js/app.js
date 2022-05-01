@@ -95,7 +95,7 @@ if (localStorage.getItem('notebook')) {
 			{
 				name: "untitled",
 				data: {ops: [{ insert: 'Type', attributes: { bold: true } },{ insert: ' to ' },{ insert: 'get started ...', attributes: { italic: true } }]}
-			}	
+			}
 		]
 	}
 	localStorage.setItem('notebook', JSON.stringify(folder))

@@ -43,8 +43,22 @@ window.addEventListener('DOMContentLoaded', async () => {
 		let key = url.split("-")[0]
 		let uid = url.split("-")[1]
 		let online = await getDoc(doc(shareRef, uid))
-		let data = JSON.parse(atob(online.data().books[key]))
-		document.getElementById('name').innerHTML = data.name
-		quill.setContents(data.data)
+		let data = online.data().books[key]
+		if (data == undefined || data == "undefined") {
+			document.getElementById('name').innerHTML = "Unknown Page"
+			quill.setContents(
+				{
+					ops:[
+							{
+								insert: 'Hmm, seems like ther is no page here...'
+							}
+					]
+				}
+			)
+		} else {
+			data = JSON.parse(atob(data))
+			document.getElementById('name').innerHTML = data.name
+			quill.setContents(data.data)
+		}
 	}
 })

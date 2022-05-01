@@ -404,3 +404,16 @@ document.getElementById("share-link").addEventListener("click", async () => {
   })
 })
 //TODO: add delete share
+document.getElementById("share-del").addEventListener("click", () => {
+  let data = localStorage.getItem("notebook")
+  data = JSON.parse(data)
+  let key = data[localStorage.getItem("lastBook")][localStorage.getItem("lastPage")].shareId
+  localStorage.setItem("notebook", JSON.stringify(data))
+  reloadFolder()
+  document.getElementById('share-page-link').style.display = 'none'
+  document.getElementById('share-page-name').innerHTML = ""
+  setDoc(doc(shareRef, auth.currentUser.uid), {
+    books: {[key]: "undefined"}
+  }, {merge: true})
+  data[localStorage.getItem("lastBook")][localStorage.getItem("lastPage")].shareId = ""
+})

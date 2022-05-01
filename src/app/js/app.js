@@ -105,15 +105,18 @@ import {editorOpen} from './modules/swipeEditior.js'
 
 // Share to script
 window.addEventListener('DOMContentLoaded', () => {
-	const parsedUrl = new URL(window.location);
-	var searchParam = parsedUrl.searchParams
-	if (searchParam.get('title')) {
-		folder[curBook].push({
-			name: searchParam.get('title'),
-			data: {ops: [{ insert: searchParam.get('body') }]}
-		})
-		curPage = Number.parseInt(curPage)+1
-		updateUi(curBook, curPage)
+	if (sessionStorage.getItem('inputData')) {
+		setTimeout(() => {
+			let data = sessionStorage.getItem('inputData')
+			data = JSON.parse(data)
+			folder[curBook].push({
+				name: data.title,
+				data: {ops: [{ insert: data.body }]}
+			})
+			curPage = Number.parseInt(curPage)+1
+			updateUi(curBook, curPage)
+			sessionStorage.removeItem('inputData')
+		}, 2000)
 	}
 })
 

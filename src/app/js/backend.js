@@ -395,12 +395,12 @@ document.getElementById("share-link").addEventListener("click", async () => {
     }
   }
   document.getElementById('share-page-link').style.display = 'block' 
-	document.getElementById('share-page-link').innerHTML = window.location.origin + "/share/?key=" + key + "&uid=" + localStorage.getItem('uid')
+	document.getElementById('share-page-link').innerHTML = window.location.origin + "/share/#" + key + "-" + localStorage.getItem('uid')
 	document.getElementById('share-page-name').innerHTML = nameN
   navigator.share({
     title: nameN,
     text: "Check out my page",
-    url: window.location.origin + "/share/?key=" + key + "&uid=" + auth.currentUser.uid
+    url: window.location.origin + "/share/#" + key + "-" + auth.currentUser.uid
   })
 })
 //TODO: add delete share

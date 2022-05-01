@@ -38,11 +38,12 @@ var store = getFirestore(app)
 let shareRef = collection(store,"shares")
 
 window.addEventListener('DOMContentLoaded', async () => {
-	const parsedUrl = new URL(window.location);
-	var searchParam = parsedUrl.searchParams
-	if (searchParam.get('key') && searchParam.get('uid')) {
-		let online = await getDoc(doc(shareRef, searchParam.get('uid')))
-		let data = JSON.parse(atob(online.data().books[searchParam.get('key')]))
+	if (window.location.href.indexOf("#") > -1) {
+		let url = window.location.href.split("#")[1]
+		let key = url.split("-")[0]
+		let uid = url.split("-")[1]
+		let online = await getDoc(doc(shareRef, uid))
+		let data = JSON.parse(atob(online.data().books[key]))
 		document.getElementById('name').innerHTML = data.name
 		quill.setContents(data.data)
 	}

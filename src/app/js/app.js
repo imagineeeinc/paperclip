@@ -137,7 +137,7 @@ function switchPage(page) {
 	editorFocus()
 	if (folder[curBook][curPage].shareId) {
 		document.getElementById('share-page-link').style.display = 'block' 
-		document.getElementById('share-page-link').innerHTML = window.location.origin + "/share/?key=" + folder[curBook][curPage].shareId + "&uid=" + localStorage.getItem('uid')
+		document.getElementById('share-page-link').innerHTML = window.location.origin + "/share/#" + folder[curBook][curPage].shareId + "-" + localStorage.getItem('uid')
 		document.getElementById('share-page-name').innerHTML = folder[curBook][curPage].name
 	} else {
 		document.getElementById('share-page-link').innerHTML = ''

@@ -14,3 +14,6 @@ if (searchParam.get('page')) {
 	sessionStorage.setItem('inputData', JSON.stringify(data))
 	window.location.href = "app/"
 }
+if (window.location.href.indexOf("/app") > -1) {
+	window.location.pathname = "/"
+}

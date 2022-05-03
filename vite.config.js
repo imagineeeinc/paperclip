@@ -15,6 +15,7 @@ module.exports = {
         main: resolve(__dirname, 'src/index.html'),
         app: resolve(__dirname, 'src/app/index.html'),
         share: resolve(__dirname, 'src/share/index.html'),
+        404: resolve(__dirname, 'src/404.html')
       }
     }
   },

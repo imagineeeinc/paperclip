@@ -13,11 +13,6 @@
 		--accent: rgb(0, 59, 70);
 		--white: var(--background);
 	}
-	#app-icon {
-		background: url('../../img/paperclip.png');
-		background-size: contain;
-		background-repeat: no-repeat;
-	}
 }
 @media (prefers-color-scheme: dark) {
   body {
@@ -26,16 +21,14 @@
 		--accent: rgb(0, 77, 90);
 		--white: rgb(21, 21, 21);
 	}
-	#app-icon {
-		background: url('../../img/paperclip.png');
-		background-size: contain;
-		background-repeat: no-repeat;
-	}
 }
 #app-icon {
-	aspect-ratio: 1/1;
 	height: 50px;
+	width: 50px;
 	display: inline-block;
+	background: url('../../img/paperclip.png');
+	background-size: contain;
+	background-repeat: no-repeat;
 }
 #name {
 	position: absolute;

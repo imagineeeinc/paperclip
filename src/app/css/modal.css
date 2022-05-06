@@ -48,29 +48,6 @@
 .modal button {
 	margin: 5px;
 }
-#alert-btn {
-	background-color: cornflowerblue;
-	color: white;
-}
-#alert-content {
-	margin: 20px;
-	background-color: var(--background);
-	padding: 40px;
-}
-#alert-text {
-	font-size: x-large;
-	font-weight: bold;
-	color: var(--color);
-	margin-bottom: 10px;
-}
-#alert-btn, #alert-cancel {
-	padding: 10px;
-	border-radius: 10px;
-	float: right;
-}
-#alert {
-	box-shadow: none;
-}
 #share-content {
 	margin: 20px;
 	padding: 40px;

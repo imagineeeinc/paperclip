@@ -19,7 +19,6 @@ if (import.meta.env.PROD) {
 import '../css/main.css'
 import {setContents, getContents, changeHandler, editorFocus, editMode} from './editor.js'
 import {signin, signout, updateDb, updateUiCodeFn, reloadState } from './backend.js'
-//import {setModalClass, ask, getAns, tell} from './modal.js'
 
 //Update Ui
 function updateUi(book, page) {
@@ -29,18 +28,17 @@ function updateUi(book, page) {
 var tree = document.getElementById('tree-view')
 updateUiCodeFn((b,p) => {folder=JSON.parse(localStorage.getItem("notebook"));updateUi(b,p)})
 window.updateUi = updateUi
-
-//Theme setter
-if (localStorage.getItem('theme')) {
-	document.body.dataset.theme = localStorage.getItem('theme')
-} else {
-	localStorage.setItem('theme', 'light')
-}
 //Micromodal setup
 import MicroModal from 'micromodal';
 MicroModal.init();
 //setModalClass(MicroModal)
-//tell('Welcome to the Notebook!', 'info')
+import * as vex from 'vex-js'
+import 'vex-js/dist/css/vex.css'
+import 'vex-js/dist/css/vex-theme-top.css'
+import * as vex_dialog from 'vex-dialog'
+vex.registerPlugin(vex_dialog)
+vex.defaultOptions.className = 'vex-theme-top'
+//TODO: Vex styling dialog
 
 //Load page
 window.onload = () => setTimeout(()=>document.body.style.opacity=1,250)
@@ -129,13 +127,18 @@ function changeNotebook(book) {
 	updateTree()
 }
 function switchPage(page) {
-	curPage = page
+	if (folder[curBook][curPage]) {
+		curPage = page
+	} else {
+		page = 0
+		curPage = page
+	}
 	localStorage.setItem('lastPage', page)
 	setContents(folder[curBook][curPage].data)
   editorOpen(false)
 	document.getElementById('cur-page').value = folder[curBook][curPage].name
 	document.getElementById('cur-page').dataset.pre = folder[curBook][curPage].name
-	if (folder[curBook].length != 1) document.querySelector('.selected-page').classList.toggle('selected-page')
+	//if (folder[curBook].length != 1) document.querySelector('.selected-page').classList.toggle('selected-page')
 	document.querySelector('.tree-item[data-num="' + page + '"]').classList.toggle('selected-page')
 	editorFocus()
 	if (folder[curBook][curPage].shareId) {
@@ -192,23 +195,33 @@ document.getElementById("cur-page").onchange = () => {
 	updateUi(curBook, curPage)
 }
 document.getElementById("add-page-btn").onclick = () => {
-	let name = prompt('Enter the name of the new page:')
-	if (name) {
-		folder[curBook].push({name: name, data: {ops: []}})
-		updateUi(curBook, Object.keys(folder[curBook])[Object.keys(folder[curBook]).length - 1])
-	}
-	updateUi(curBook, folder[curBook].length - 1)
+	vex.dialog.prompt({
+		message: 'Enter new page name:',
+		placeholder: 'untitled',
+		callback: (name) => {
+			if (name) {
+				folder[curBook].push({name: name, data: {ops: []}})
+				updateUi(curBook, Object.keys(folder[curBook])[Object.keys(folder[curBook]).length - 1])
+			}
+		}
+	})
 }
 document.getElementById("del-page-btn").onclick = () => {
 	if (folder[curBook].length > 1) {
-		let ask = confirm('Are you sure you want to delete this page?')
-		if (ask) {
-			delete folder[curBook][curPage];
-			document.querySelector('.tree-item[data-num="' + Object.keys(folder[curBook])[0] + '"]').classList.toggle('selected-page')
-			updateUi(curBook, Object.keys(folder[curBook])[0])
-		}
+		vex.dialog.confirm({
+			message: 'Are you sure you want to delete this page?',
+			callback: function (ask) {
+				if (ask) {
+					delete folder[curBook][curPage];
+					document.querySelector('.tree-item[data-num="' + curPage + '"]').classList.toggle('selected-page')
+					updateUi(curBook, curPage-1)
+				}
+			}
+		})
 	} else {
-		alert("You can't delete the last page")
+		vex.dialog.alert({
+			message: 'You can\'t delete the last page!'
+		})
 	}
 }
 
@@ -228,21 +241,32 @@ document.getElementById("book-select").ondblclick = () => {
 	document.getElementById("book-name").focus()
 }
 document.getElementById("add-book").onclick = () => {
-	let name = prompt('Enter the name of the new book:')
-	if (name) {
-		folder[name] = [{name: 'untitled', data: {ops: []}}]
-		updateUi(name, 0)
-	}
+	vex.dialog.prompt({
+		message: 'Enter the name of the new book:',
+		placeholder: 'untitled',
+		callback: (name) => {
+			if (name) {
+				folder[name] = [{name: 'untitled', data: {ops: []}}]
+				updateUi(name, 0)
+			}
+		}
+	})
 }
 document.getElementById("del-book").onclick = () => {
 	if (Object.keys(folder).length > 1) {
-		let ask = confirm('Are you sure you want to delete this book?')
-		if (ask) {
-			delete folder[curBook]
-			updateUi(Object.keys(folder)[0], 0)
-		}
+		vex.dialog.confirm({
+			message: 'Are you sure you want to delete this book?',
+			callback: function (ask) {
+				if (ask) {
+					delete folder[curBook]
+					updateUi(Object.keys(folder)[0], 0)
+				}
+			}
+		})
 	} else {
-		alert('You cannot delete the last book')
+		vex.dialog.alert({
+			message: 'You can\'t delete the last book!'
+		})
 	}
 }
 

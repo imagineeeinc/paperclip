@@ -145,8 +145,8 @@ button:active {
 input[type="text"] {
 	border: none;
 	border-bottom: 2px solid var(--accent);
-	background-color: var(--background);
-	color: var(--color);
+	background-color: var(--background) !important;
+	color: var(--color) !important;
 	font-size: large;
 	height: 20px;
 	padding: 10px;
@@ -293,7 +293,7 @@ input[type="text"]:focus, select:focus {
 	color: var(--background);	
 }
 #panel {
-	height: auto;
+	height: 36px;
 	position: absolute;
 	left: 20px;
 	padding: 10px;
@@ -301,6 +301,10 @@ input[type="text"]:focus, select:focus {
 	background-color: var(--background);
 	filter: drop-shadow(0 0 10px black);
 	user-select: none;
+	overflow-y: auto;
+}
+#panel > button {
+	font-size: 20px;
 }
 #panel:hover {
 	box-shadow: 4px 4px rgb(26, 26, 26);
@@ -325,7 +329,7 @@ input[type="text"]:focus, select:focus {
 	#cur-page {
 		font-size: medium;
 		padding: 5px;
-		width: calc(100% - 210px);
+		width: calc(100% - 125px);
 	}
 	#editor-box {
 		width: calc(100% - 55px);
@@ -393,4 +397,12 @@ input[type="text"]:focus, select:focus {
 }
 .active-theme {
 	border: cornflowerblue 2px solid;
+}
+.vex-content {
+	background-color: var(--background) !important;
+	color: var(--color) !important;
+}
+.vex-overlay {
+	background: rgba(0, 0, 0, 0.8) !important;
+	backdrop-filter: blur(2.5px);
 }

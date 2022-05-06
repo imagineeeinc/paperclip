@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup, signInWithCredential } from "firebase/auth";
 import { getFirestore, collection, setDoc, doc, getDoc, updateDoc, serverTimestamp, /* enableIndexedDbPersistence */ } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -27,6 +27,8 @@ let documentRef
 let shareRef
 let unsubscribe
 
+import * as vex from 'vex-js'
+
 // Setup Auth
 const auth = getAuth(app);
 auth.languageCode = 'en'
@@ -34,73 +36,129 @@ var googleAuth = new GoogleAuthProvider()
 var githubAuth = new GithubAuthProvider()
 shareRef = collection(store,"shares")
 export var signin = (e) => {
-  if(e === 'google') {
-    signInWithPopup(auth, googleAuth)
-    .then((result) => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      // The signed-in user info.
-      const user = result.user;
-      // ...
-      //ask would you like to merge currnent local data with the data from the cloud
-      if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
-        let ask = confirm('Would you like to merge your current local data with the data from the cloud?')
-        if (!ask) {
-          sessionStorage.setItem('dontMergeLocal', true)
+  if (window.process) {
+    window.open('https://' + window.location.host + '/signin/')
+    vex.dialog.prompt({
+      message: 'Please copy the code from the URL and paste it here:',
+      placeholder: 'The Code',
+      callback: (code) => {
+        if (code) {
+          let data = JSON.parse(atob(code))
+          if (e === 'google') {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            const credential = GoogleAuthProvider.credentialFromResult(data);
+            signInWithCredential(auth, credential)
+            //ask would you like to merge currnent local data with the data from the cloud
+            if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
+              vex.dialog.confirm({
+                message: 'Do you want to merge your local data with the data from the cloud?',
+                callback: (ask) => {
+                  if (!ask) {
+                    sessionStorage.setItem('dontMergeLocal', true)
+                  }
+                }
+              })
+            }
+          } else if (e === 'github') {
+            const credential = GithubAuthProvider.credentialFromResult(result);
+            signInWithCredential(auth, credential)
+            //ask would you like to merge currnent local data with the data from the cloud
+            if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
+              vex.dialog.confirm({
+                message: 'Do you want to merge your local data with the data from the cloud?',
+                callback: (ask) => {
+                  if (!ask) {
+                    sessionStorage.setItem('dontMergeLocal', true)
+                  }
+                }
+              })
+            }
+          }
         }
       }
-    }).catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      // ...
-    });
-  }
-  if(e === 'github') {
-    signInWithPopup(auth, githubAuth)
-    .then((result) => {
-      // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-      const credential = GithubAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      // The signed-in user info.
-      const user = result.user;
-      // ...
-      if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
-        let ask = confirm('Would you like to merge your current local data with the data from the cloud?')
-        if (!ask) {
-          sessionStorage.setItem('dontMergeLocal', true)
+    })
+  } else {
+    if(e === 'google') {
+      signInWithPopup(auth, googleAuth)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        /* const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // ... */
+        //ask would you like to merge currnent local data with the data from the cloud
+        if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
+          vex.dialog.confirm({
+            message: 'Do you want to merge your local data with the data from the cloud?',
+            callback: (ask) => {
+              if (!ask) {
+                sessionStorage.setItem('dontMergeLocal', true)
+              }
+            }
+          })
         }
-      }
-    }).catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.email;
-      // The AuthCredential type that was used.
-      const credential = GithubAuthProvider.credentialFromError(error);
-      // ...
-    });
-  }
-  if (e === 'email') {
-    //TODO: email signin
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+    }
+    if(e === 'github') {
+      signInWithPopup(auth, githubAuth)
+      .then((result) => {
+        // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+        const credential = GithubAuthProvider.credentialFromResult(result);
+        /* const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // ... */
+        if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
+          vex.dialog.confirm({
+            message: 'Do you want to merge your local data with the data from the cloud?',
+            callback: (ask) => {
+              if (!ask) {
+                sessionStorage.setItem('dontMergeLocal', true)
+              }
+            }
+          })
+        }
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.email;
+        // The AuthCredential type that was used.
+        const credential = GithubAuthProvider.credentialFromError(error);
+        // ...
+      });
+    }
+    if (e === 'email') {
+      //TODO: email signin
+    }
   }
 }
 
 //auth helper functions
 export var signout = () => {
   auth.signOut()
-  let ask = confirm("Would you like to delete your local data once signed out?")
-  if(ask) {
-    localStorage.clear()
-    sessionStorage.setItem('passUnloadSave', true)
-    location.reload()
-  }
+
+  vex.dialog.confirm({
+    message: 'Would you like to delete your local data once signed out?',
+    callback: (ask) => {
+      if(ask) {
+        localStorage.clear()
+        sessionStorage.setItem('passUnloadSave', true)
+        location.reload()
+      }
+    }
+  })
 }
 var updateUiCode = (b, p) => {
   updateUi(b, p)
@@ -160,14 +218,19 @@ auth.onAuthStateChanged(async user => {
         sessionStorage.removeItem('dontMergeLocal')
       } else {
         if (online !== offline) {
-          let ask = confirm("You have a different notebook online and offline. Would you like to merge the offline copy with the online one? (This can overwrite some data)")
-          if (ask) {
-            let newOne = {...JSON.parse(offline), ...JSON.parse(online)}
-            localStorage.setItem("notebook", JSON.stringify(newOne))
-          } else {
-            let newOne = {...JSON.parse(online), ...JSON.parse(offline)}
-            localStorage.setItem("notebook", JSON.stringify(newOne))
-          }
+          vex.dialog.confirm({
+            message: 'You have a different notebook online and offline. Would you like to merge the offline copy with the online one? (This can overwrite some data)',
+            callback: (ask) => {
+              if (ask) {
+                let newOne = {...JSON.parse(offline), ...JSON.parse(online)}
+                localStorage.setItem("notebook", JSON.stringify(newOne))
+              } else {
+                let newOne = {...JSON.parse(online), ...JSON.parse(offline)}
+                localStorage.setItem("notebook", JSON.stringify(newOne))
+              }
+              reloadFolder()
+            }
+          })
         }
       }
       //set loacal data
@@ -272,52 +335,68 @@ auth.onAuthStateChanged(async user => {
 })
 //delete data
 document.getElementById("del-all").addEventListener("click", () => {
-  let ask = confirm("Are you sure you want to delete all your data? This cannot be undone with no chance of recovering.")
-  if (ask) {
-    if (auth.currentUser) {
-      deleteDoc(doc(documentRef, auth.currentUser.uid))
+  vex.dialog.confirm({
+    message: 'Are you sure you want to delete all your data? This cannot be undone with no chance of recovering.',
+    callback: (ask) => {
+      if (ask) {
+        if (auth.currentUser) {
+          deleteDoc(doc(documentRef, auth.currentUser.uid))
+        }
+        sessionStorage.setItem('passUnloadSave', true)
+        sessionStorage.setItem('noAutoSave', true)
+        localStorage.removeItem("notebook", "")
+        localStorage.removeItem("lastBook", "")
+        localStorage.removeItem("lastPage", "")
+        localStorage.removeItem("lastNotebook", "")
+        location.reload()
+      }
     }
-    sessionStorage.setItem('passUnloadSave', true)
-    sessionStorage.setItem('noAutoSave', true)
-    localStorage.removeItem("notebook", "")
-    localStorage.removeItem("lastBook", "")
-    localStorage.removeItem("lastPage", "")
-    localStorage.removeItem("lastNotebook", "")
-    location.reload()
-  }
+  })
 })
 //delete account
 document.getElementById("req-del-account").addEventListener("click", () => {
-  let ask = confirm("Are you sure you want to delete your account? THis will delete all your data and cannot be undone, with no chance of recoverd.")
-  if (ask) {
-    if (!localStorage.getItem('reqDelAccount')) {
-      updateDoc(doc(documentRef, localStorage.getItem('uid')), {
-        books: localStorage.getItem("notebook"),
-        lastEdited: serverTimestamp(),
-        lastBook: localStorage.getItem("lastBook"),
-        lastPage: localStorage.getItem("lastPage"),
-        reqDelAccount: true,
-        theme: localStorage.getItem("theme")
-      })
-      signout()
-      localStorage.setItem('reqDelAccount', true)
-      alert("Your account will be deleted in 24 hours")
-      alert("By the way the deleting process is currently manually done so it will take longer than 24 hours (upto a month)")
-    } else {
-      let ask1 = confirm("You have already requested to delete your account, would you like to cancel it?")
-      if (ask1) {
-        updateDoc(doc(documentRef, localStorage.getItem('uid')), {
-          books: localStorage.getItem("notebook"),
-          lastEdited: serverTimestamp(),
-          lastBook: localStorage.getItem("lastBook"),
-          lastPage: localStorage.getItem("lastPage"),
-          reqDelAccount: false,
-          theme: localStorage.getItem("theme")
-        })
-        localStorage.removeItem('reqDelAccount')
+  vex.dialog.confirm({
+    message: 'Are you sure you want to delete your account? This cannot be undone with no chance of recovering.',
+    callback: (ask) => {
+      if (ask) {
+        if (!localStorage.getItem('reqDelAccount')) {
+          updateDoc(doc(documentRef, localStorage.getItem('uid')), {
+            books: localStorage.getItem("notebook"),
+            lastEdited: serverTimestamp(),
+            lastBook: localStorage.getItem("lastBook"),
+            lastPage: localStorage.getItem("lastPage"),
+            reqDelAccount: true,
+            theme: localStorage.getItem("theme")
+          })
+          signout()
+          localStorage.setItem('reqDelAccount', true)
+          vex.dialog.alert({
+            message: "Your account will be deleted in 24 hours"
+          })
+          vex.dialog.alert({
+            message: "By the way the deleting process is currently manually done so it will take longer than 24 hours (upto a month)"
+          })
+        } else {
+          vex.dialog.confirm({
+            message: 'You have already requested to delete your account, would you like to cancel it?',
+            callback: (ask) => {
+              if (ask) {
+                updateDoc(doc(documentRef, localStorage.getItem('uid')), {
+                  books: localStorage.getItem("notebook"),
+                  lastEdited: serverTimestamp(),
+                  lastBook: localStorage.getItem("lastBook"),
+                  lastPage: localStorage.getItem("lastPage"),
+                  reqDelAccount: false,
+                  theme: localStorage.getItem("theme")
+                })
+                localStorage.removeItem('reqDelAccount')
+              }
+            }
+          })
+        }
       }
     }
-  }
+  })
 })
 //save button
 document.getElementById("save-btn").addEventListener("click", () => {
@@ -397,11 +476,17 @@ document.getElementById("share-link").addEventListener("click", async () => {
   document.getElementById('share-page-link').style.display = 'block' 
 	document.getElementById('share-page-link').innerHTML = window.location.origin + "/share/#" + key + "-" + localStorage.getItem('uid')
 	document.getElementById('share-page-name').innerHTML = nameN
-  navigator.share({
-    title: nameN,
-    text: "Check out my page",
-    url: window.location.origin + "/share/#" + key + "-" + auth.currentUser.uid
-  })
+  if (navigator.share) {
+    navigator.share({
+      title: nameN,
+      text: "Check out my page",
+      url: window.location.origin + "/share/#" + key + "-" + auth.currentUser.uid
+    })
+  } else {
+    vex.dialog.alert({
+      message: " Sharing is not supported yet, so here is the link to share: " + window.location.origin + "/share/#" + key + "-" + auth.currentUser.uid
+    })
+  }
 })
 //TODO: add delete share
 document.getElementById("share-del").addEventListener("click", () => {

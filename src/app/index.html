@@ -29,13 +29,7 @@
         <div id="app-icon"></div>
       </div>
       <div id="right-toolbar">
-        <button class="material-icons" id="add-page-btn" title="Add new page">
-          add
-        </button>
         <input type="text" id="cur-page" placeholder="Untitled">
-        <button class="material-icons" id="del-page-btn" title="Delete Current Page">
-          delete
-        </button>
         <button class="material-icons" id="undo-btn" title="undo - Ctrl+z">
           undo
         </button>
@@ -67,6 +61,12 @@
     <div id="panel">
       <button class="material-icons" id="settings-btn" title="Go to settings">
         settings
+      </button>
+      <button class="material-icons" id="add-page-btn" title="Add new page">
+        add
+      </button>
+      <button class="material-icons" id="del-page-btn" title="Delete Current Page">
+        delete
       </button>
       <button class="material-icons" id="edit-btn" title="Edit Mode">
         edit_off
@@ -154,25 +154,6 @@
           <button id="share-link" class="auth-obj">Share as Link</button>
           <button id="share-del" class="auth-obj">Delete Link</button>
           <h5 style="color: grey;"><i>To update the old share link with latest data, click the button</i></h5>
-        </div>
-      </div>
-    </div>
-    <div id="alert" aria-hidden="true" class="modal">
-      <div role="dialog" aria-modal="true" aria-labelledby="alert-title">
-        <header>
-          <h1 class="modal-title" id="alert-title">
-            Paperclip is Saying
-          </h1>
-          <button aria-label="Close modal" class="material-icons modal__close" data-micromodal-close="">
-            close
-          </button>
-        </header>
-        <div id="alert-content">
-          <div id="alert-text">
-          </div>
-          <input type="text" id="alert-input">
-          <button id="alert-cancel">Cancel</button>
-          <button id="alert-btn">OK</button>
         </div>
       </div>
     </div>

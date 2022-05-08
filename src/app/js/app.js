@@ -32,11 +32,9 @@ window.updateUi = updateUi
 import MicroModal from 'micromodal';
 MicroModal.init();
 //setModalClass(MicroModal)
-import * as vex from 'vex-js'
+import * as vex from 'vex-js/dist/js/vex.combined.min.js'
 import 'vex-js/dist/css/vex.css'
 import 'vex-js/dist/css/vex-theme-top.css'
-import * as vex_dialog from 'vex-dialog'
-vex.registerPlugin(vex_dialog)
 vex.defaultOptions.className = 'vex-theme-top'
 //TODO: Vex styling dialog
 

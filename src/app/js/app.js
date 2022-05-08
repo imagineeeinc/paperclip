@@ -210,7 +210,7 @@ document.getElementById("del-page-btn").onclick = () => {
 			message: 'Are you sure you want to delete this page?',
 			callback: function (ask) {
 				if (ask) {
-					delete folder[curBook][curPage];
+					folder[curBook].splice(curPage, 1)
 					document.querySelector('.tree-item[data-num="' + curPage + '"]').classList.toggle('selected-page')
 					updateUi(curBook, curPage-1)
 				}

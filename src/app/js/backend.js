@@ -27,7 +27,7 @@ let documentRef
 let shareRef
 let unsubscribe
 
-import * as vex from 'vex-js'
+import * as vex from 'vex-js/dist/js/vex.combined.min.js'
 
 // Setup Auth
 const auth = getAuth(app);

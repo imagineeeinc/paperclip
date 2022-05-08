@@ -259,6 +259,9 @@ input[type="text"]:focus, select:focus {
 	margin: 0;
 	margin-top: 5px;
 }
+#tree-view {
+	overflow-y: auto;
+}
 #tree-view > li {
 	padding: 5px;
 	border-radius: 5px;
@@ -302,34 +305,42 @@ input[type="text"]:focus, select:focus {
 	filter: drop-shadow(0 0 10px black);
 	user-select: none;
 	overflow-y: auto;
-}
-#panel > button {
-	font-size: 20px;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+	row-gap: 10px;
+	column-gap: 5px;
 }
 #panel:hover {
 	box-shadow: 4px 4px rgb(26, 26, 26);
 }
-@media screen and (min-width: 751px) {
+@media screen and (min-width: 921px) {
 	#tree-view {
 		margin-top: 10px;
+		height: calc(100% - 140px);
 	}
 	#panel {
 		width: calc(25% - 10px);
+		height: 36px;
 		bottom: 30px;
 	}
+	#panel > button {
+		font-size: 20px;
+	}
 }
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 920px) {
 	#topbar {
 		height: 80px;
 	}
 	#right-toolbar {
 		transform: translate(10px, 40px);
 		width: 100%;
+		text-align: right;
 	}
 	#cur-page {
 		font-size: medium;
 		padding: 5px;
 		width: calc(100% - 125px);
+		max-width: 300px;
 	}
 	#editor-box {
 		width: calc(100% - 55px);
@@ -361,10 +372,15 @@ input[type="text"]:focus, select:focus {
 	}
 	#tree-view {
 		margin-top: 20px;
+		height: calc(100% - 210px);
 	}
 	#panel {
 		width: calc(80% - 10px);
+		height: 72px;
 		bottom: 10px;
+	}
+	#panel > button {
+		font-size: 30px;
 	}
 }
 

@@ -34,6 +34,15 @@ document.getElementById("editor-box").addEventListener('touchend', e => {
   handleGesture()
 })
 
+document.getElementById("tree-view").addEventListener('touchstart', e => {
+  touchstartX = e.changedTouches[0].screenX
+})
+
+document.getElementById("tree-view").addEventListener('touchend', e => {
+  touchendX = e.changedTouches[0].screenX
+  handleGesture()
+})
+
 document.getElementById("editor-box").addEventListener('click', e => {
 	editorOpen(false)
 })

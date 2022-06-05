@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup, signInWithCredential } from "firebase/auth";
-import { getFirestore, collection, setDoc, doc, getDoc, updateDoc, serverTimestamp, /* enableIndexedDbPersistence */ } from "firebase/firestore";
+import { getFirestore, collection, setDoc, doc, getDoc, updateDoc, /* enableIndexedDbPersistence */ } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -28,6 +28,8 @@ let shareRef
 let unsubscribe
 
 import * as vex from 'vex-js/dist/js/vex.combined.min.js'
+
+function timestamp() {return Math.floor(Date.now() / 1000)}
 
 // Setup Auth
 const auth = getAuth(app);
@@ -170,9 +172,10 @@ export var updateUiCodeFn = (callback) => {
 //Update cloud db
 export var updateDb = () => {
   if (localStorage.getItem("notebook") !== localStorage.getItem("lastNotebook")) {
+    localStorage.setItem('lastEdited', timestamp())
     updateDoc(doc(documentRef, localStorage.getItem('uid')), {
       books: btoa(localStorage.getItem("notebook")),
-      lastEdited: serverTimestamp(),
+      lastEdited: timestamp(),
       lastBook: btoa(localStorage.getItem("lastBook")),
       lastPage: localStorage.getItem("lastPage"),
       theme: localStorage.getItem("theme"),
@@ -217,20 +220,31 @@ auth.onAuthStateChanged(async user => {
         localStorage.setItem('notebook', online)
         sessionStorage.removeItem('dontMergeLocal')
       } else {
-        if (online !== offline) {
-          vex.dialog.confirm({
-            message: 'You have a different notebook online and offline. Would you like to merge the offline copy with the online one? (This can overwrite some data)',
-            callback: (ask) => {
-              if (ask) {
-                let newOne = {...JSON.parse(offline), ...JSON.parse(online)}
-                localStorage.setItem("notebook", JSON.stringify(newOne))
-              } else {
-                let newOne = {...JSON.parse(online), ...JSON.parse(offline)}
-                localStorage.setItem("notebook", JSON.stringify(newOne))
+        let time = docSnap.data().lastEdited
+        if (typeof time == 'number' && localStorage.getItem('lastEdited')) {
+          let lastEdited = localStorage.getItem('lastEdited')
+          if (lastEdited < time) {
+            localStorage.setItem('lastEdited', time)
+            localStorage.setItem('lastBook', {...JSON.parse(offline), ...JSON.parse(online)})
+          } else if (lastEdited > time) {
+            localStorage.setItem('lastBook', {...JSON.parse(online), ...JSON.parse(offline)})
+          }
+        } else {
+          if (online !== offline) {
+            vex.dialog.confirm({
+              message: 'You have a different notebook online and offline. Would you like to merge the offline copy with the online one? (This can overwrite some data)',
+              callback: (ask) => {
+                if (ask) {
+                  let newOne = {...JSON.parse(offline), ...JSON.parse(online)}
+                  localStorage.setItem("notebook", JSON.stringify(newOne))
+                } else {
+                  let newOne = {...JSON.parse(online), ...JSON.parse(offline)}
+                  localStorage.setItem("notebook", JSON.stringify(newOne))
+                }
+                reloadFolder()
               }
-              reloadFolder()
-            }
-          })
+            })
+          }
         }
       }
       //set loacal data
@@ -249,7 +263,7 @@ auth.onAuthStateChanged(async user => {
           e.returnValue = '';
           updateDoc(doc(documentRef, localStorage.getItem('uid')), {
             books: btoa(localStorage.getItem("notebook")),
-            lastEdited: serverTimestamp(),
+            lastEdited: timestamp(),
             lastBook: btoa(localStorage.getItem("lastBook")),
             lastPage: localStorage.getItem("lastPage"),
             theme: localStorage.getItem("theme")
@@ -267,7 +281,7 @@ auth.onAuthStateChanged(async user => {
           email: user.email,
           displayName: user.displayName,
           books: btoa(localStorage.getItem("notebook")),
-          lastEdited: serverTimestamp(),
+          lastEdited: timestamp(),
           lastBook: btoa(localStorage.getItem("lastBook")),
           lastPage: localStorage.getItem("lastPage"),
           theme: localStorage.getItem("theme")
@@ -290,7 +304,7 @@ auth.onAuthStateChanged(async user => {
           email: user.email,
           displayName: user.displayName,
           books: btoa(localStorage.getItem("notebook")),
-          lastEdited: serverTimestamp(),
+          lastEdited: timestamp(),
           lastBook: btoa('default book'),
           lastPage: '0',
           theme: 'light'
@@ -362,7 +376,7 @@ document.getElementById("req-del-account").addEventListener("click", () => {
         if (!localStorage.getItem('reqDelAccount')) {
           updateDoc(doc(documentRef, localStorage.getItem('uid')), {
             books: localStorage.getItem("notebook"),
-            lastEdited: serverTimestamp(),
+            lastEdited: timestamp(),
             lastBook: localStorage.getItem("lastBook"),
             lastPage: localStorage.getItem("lastPage"),
             reqDelAccount: true,
@@ -383,7 +397,7 @@ document.getElementById("req-del-account").addEventListener("click", () => {
               if (ask) {
                 updateDoc(doc(documentRef, localStorage.getItem('uid')), {
                   books: localStorage.getItem("notebook"),
-                  lastEdited: serverTimestamp(),
+                  lastEdited: timestamp(),
                   lastBook: localStorage.getItem("lastBook"),
                   lastPage: localStorage.getItem("lastPage"),
                   reqDelAccount: false,

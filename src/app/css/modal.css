@@ -17,12 +17,19 @@
   display: block;
 }
 .modal__close {
-	position: absolute;
-	top: 5px;
-	right: 5px;
-	font-size: xx-large;
-	background: transparent;
+	position: fixed;
+	top: 10px;
+	right: 25px;
+	font-size: 25pt;
+	background: var(--background);
   border: none;
+	opacity: 1;
+	padding: 10px;
+	border: 1px solid var(--accent);
+}
+.modal__close:hover {
+	transform: rotate(180deg);
+	box-shadow: -5px -5px var(--accent);
 }
 
 .modal__content {

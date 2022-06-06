@@ -12,6 +12,7 @@ document.querySelectorAll(".theme-btn").forEach(btn => {
 			btn.classList.remove('active-theme')
 		})
 		btn.classList.add('active-theme')
+		document.querySelector('meta[name="theme-color"]').setAttribute('content', btn.dataset.theme === 'dark' ? '#0a131c' : btn.dataset.theme === 'black' ? '#000' :'#f0f8ff')
 		if (window.process) {
 			window.require('electron').ipcRenderer.send('theme', localStorage.getItem('theme'))
 		}

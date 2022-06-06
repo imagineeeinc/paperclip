@@ -158,7 +158,7 @@ header > br {
   background-position: center;
   width: 95%;
   right: 15px;
-  aspect-ratio: 1303/156;
+  aspect-ratio: 863/85;
   margin-top: 10px;
 }
 #books-screenshot {
@@ -176,10 +176,8 @@ header > br {
   background-position: center;
   width: 50%;
   right: 5px;
-  aspect-ratio: 1023/665;
+  aspect-ratio: 4/3;
   margin-top: 10px;
-  border: 1px solid rgba(0,0,0,0);
-  box-shadow: none;
 }
 #share-screenshot {
   background-image: url('./img/share.png');

@@ -19,6 +19,7 @@ if (import.meta.env.PROD) {
 import '../css/main.css'
 import {setContents, getContents, changeHandler, editorFocus, editMode} from './editor.js'
 import {signin, signout, updateDb, updateUiCodeFn, reloadState } from './backend.js'
+function timestamp() {return Math.floor(Date.now() / 1000)}
 
 //Update Ui
 function updateUi(book, page) {
@@ -56,7 +57,9 @@ changeHandler((eventName, ...args)=>{
 })
 setInterval(() => {
 	if (sessionStorage.getItem('noAutoSave') !== 'true') {
+		localStorage.setItem('lastEdited', timestamp())
 		localStorage.setItem('notebook', JSON.stringify(folder))
+		updateDb()
 	}
 }, 5000)
 window.onunload = () => {
@@ -137,6 +140,7 @@ function switchPage(page) {
 	document.getElementById('cur-page').value = folder[curBook][curPage].name
 	document.getElementById('cur-page').dataset.pre = folder[curBook][curPage].name
 	//if (folder[curBook].length != 1) document.querySelector('.selected-page').classList.toggle('selected-page')
+	document.querySelector('.selected-page').classList.toggle('selected-page')
 	document.querySelector('.tree-item[data-num="' + page + '"]').classList.toggle('selected-page')
 	editorFocus()
 	if (folder[curBook][curPage].shareId) {
@@ -148,6 +152,7 @@ function switchPage(page) {
 		document.getElementById('share-page-name').innerHTML = ''
 		document.getElementById('share-page-link').style.display = 'none'
 	}
+	document.title = folder[curBook][curPage].name + ' (' + curBook + ')'
 }
 function updateTree() {
 	tree.innerHTML = ''

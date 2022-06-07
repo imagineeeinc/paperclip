@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup, signInWithCredential } from "firebase/auth";
-import { getFirestore, collection, setDoc, doc, getDoc, updateDoc, /* enableIndexedDbPersistence */ } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInAnonymously, signInWithPopup, signInWithCredential } from "firebase/auth";
+import { getFirestore, collection, setDoc, doc, getDoc, updateDoc, onSnapshot /*, enableIndexedDbPersistence */ } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -25,7 +25,7 @@ const analytics = getAnalytics(app);
 var store = getFirestore(app)
 let documentRef
 let shareRef
-let unsubscribe
+let myDb
 
 import * as vex from 'vex-js/dist/js/vex.combined.min.js'
 
@@ -90,7 +90,7 @@ export var signin = (e) => {
         const user = result.user;
         // ... */
         //ask would you like to merge currnent local data with the data from the cloud
-        if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
+        /* if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
           vex.dialog.confirm({
             message: 'Do you want to merge your local data with the data from the cloud?',
             callback: (ask) => {
@@ -99,11 +99,14 @@ export var signin = (e) => {
               }
             }
           })
-        }
+        } */
       }).catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
+        vex.alert({
+          message: errorMessage
+        })
         // The email of the user's account used.
         const email = error.email;
         // The AuthCredential type that was used.
@@ -120,7 +123,7 @@ export var signin = (e) => {
         // The signed-in user info.
         const user = result.user;
         // ... */
-        if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
+        /* if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
           vex.dialog.confirm({
             message: 'Do you want to merge your local data with the data from the cloud?',
             callback: (ask) => {
@@ -129,7 +132,22 @@ export var signin = (e) => {
               }
             }
           })
-        }
+        } */
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.email;
+        // The AuthCredential type that was used.
+        const credential = GithubAuthProvider.credentialFromError(error);
+        // ...
+      });
+    }
+    if (e === 'anoymous') {
+      signInAnonymously(auth)
+      .then((result) => {
+        //ask would you like to merge currnent local data with the data from the cloud
       }).catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;
@@ -181,8 +199,8 @@ export var updateDb = () => {
       theme: localStorage.getItem("theme"),
       loginSite: window.location.href.indexOf("web.app") > -1 ? "web.app" : window.location.href.indexOf("vercel.app") > -1 ? "vercel.app" : "null"
     })
+    localStorage.setItem("lastNotebook", localStorage.getItem("notebook"))
   }
-  localStorage.setItem("lastNotebook", localStorage.getItem("notebook"))
 }
 
 //on auth state chage
@@ -206,54 +224,19 @@ auth.onAuthStateChanged(async user => {
     const docSnap = await getDoc(doc(documentRef, user.uid));
     //exsts
     if (docSnap.exists()) {
-      //ask to merge
-      let online
-      online = docSnap.data().books
-      if (online[0] != '{') {
-        online = atob(docSnap.data().books)
-        localStorage.setItem('lastBook', atob(docSnap.data().lastBook))
-      } else {
-        localStorage.setItem('lastBook', docSnap.data().lastBook)
-      }
-      let offline = localStorage.getItem("notebook")
-      if (sessionStorage.getItem('dontMergeLocal') === 'true') {
-        localStorage.setItem('notebook', online)
-        sessionStorage.removeItem('dontMergeLocal')
-      } else {
-        let time = docSnap.data().lastEdited
-        if (typeof time == 'number' && localStorage.getItem('lastEdited')) {
-          let lastEdited = localStorage.getItem('lastEdited')
-          if (lastEdited < time) {
-            localStorage.setItem('lastEdited', time)
-            localStorage.setItem('lastBook', {...JSON.parse(offline), ...JSON.parse(online)})
-          } else if (lastEdited > time) {
-            localStorage.setItem('lastBook', {...JSON.parse(online), ...JSON.parse(offline)})
-          }
-        } else {
-          if (online !== offline) {
-            vex.dialog.confirm({
-              message: 'You have a different notebook online and offline. Would you like to merge the offline copy with the online one? (This can overwrite some data)',
-              callback: (ask) => {
-                if (ask) {
-                  let newOne = {...JSON.parse(offline), ...JSON.parse(online)}
-                  localStorage.setItem("notebook", JSON.stringify(newOne))
-                } else {
-                  let newOne = {...JSON.parse(online), ...JSON.parse(offline)}
-                  localStorage.setItem("notebook", JSON.stringify(newOne))
-                }
-                reloadFolder()
-              }
-            })
-          }
-        }
-      }
-      //set loacal data
-      localStorage.setItem('lastPage', docSnap.data().lastPage)
-      localStorage.setItem('theme', docSnap.data().theme || 'light')
-      document.body.dataset.theme = localStorage.getItem('theme')
-      document.querySelector('button[data-theme="' + localStorage.getItem('theme') + '"]').classList.add('active-theme')
-      updateUiCode(localStorage.getItem("lastBook"), docSnap.data().lastPage)
-      updateDb()
+      myDb = onSnapshot(doc(documentRef, user.uid), async (doc) => {
+        localStorage.setItem('notebook', atob(doc.data().books))
+        localStorage.setItem('lastEdited', doc.data().lastEdited)
+        localStorage.setItem('lastBook', atob(doc.data().lastBook))
+        localStorage.setItem('lastPage', doc.data().lastPage)
+        //theme
+        localStorage.setItem('theme', docSnap.data().theme || 'light')
+        document.body.dataset.theme = localStorage.getItem('theme')
+        document.querySelector('button[data-theme="' + localStorage.getItem('theme') + '"]').classList.add('active-theme')
+        localStorage.setItem('loginSite', doc.data().loginSite)
+        updateUiCode(localStorage.getItem("lastBook"), docSnap.data().lastPage)
+        reloadFolder()
+      })
       //setup on window close
       window.addEventListener('beforeunload', function (e) {
         if (localStorage.getItem("notebook") !== localStorage.getItem("lastNotebook")) {
@@ -273,7 +256,6 @@ auth.onAuthStateChanged(async user => {
       });
     } else {
       //if no cloud data
-
       //dont merge local data with oneline
       if (sessionStorage.getItem('dontMergeLocal') !== 'true') {
         setDoc(doc(documentRef, user.uid), {
@@ -314,7 +296,7 @@ auth.onAuthStateChanged(async user => {
     }
     setInterval(()=>{
       updateDb()
-    }, 1000*5)
+    }, 1000)
     //setup share document
     const shareSnap = await getDoc(doc(shareRef, user.uid));
     //dosen't exists
@@ -344,7 +326,7 @@ auth.onAuthStateChanged(async user => {
     localStorage.removeItem('uid')
     localStorage.removeItem('email')
     localStorage.removeItem('signInProvider')
-    document.getElementById("share-btn").classList.add("hide")
+    document.getElementById('share-btn').classList.add("hide")
   }
 })
 //delete data

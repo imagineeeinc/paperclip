@@ -281,6 +281,10 @@ document.getElementById("settings-btn").addEventListener('click', () => {
 	editorOpen(true)
 	MicroModal.show('settings')
 })
+document.getElementById("account-btn").addEventListener('click', () => {
+	editorOpen(true)
+	MicroModal.show('account')
+})
 document.getElementById("edit-btn").addEventListener('click', () => {
 	edit = !edit
 	editMode(edit)
@@ -337,3 +341,6 @@ if (window.location.href.indexOf('autoSignIn=google') > -1) {
 reloadState(()=>{
 	folder = JSON.parse(localStorage.getItem('notebook'))
 })
+if (!localStorage.getItem('signInProvider')) {
+	MicroModal.show('account')
+}

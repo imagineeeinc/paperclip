@@ -21,3 +21,5 @@ document.querySelectorAll(".theme-btn").forEach(btn => {
 if (window.process) {
 	window.require('electron').ipcRenderer.send('theme', localStorage.getItem('theme'))
 }
+let t = localStorage.getItem('theme')
+document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#0a131c' : t === 'black' ? '#000' : t === 'light' ? '#f0f8ff' : '#003b46')

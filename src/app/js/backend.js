@@ -225,17 +225,21 @@ auth.onAuthStateChanged(async user => {
     //exsts
     if (docSnap.exists()) {
       myDb = onSnapshot(doc(documentRef, user.uid), async (doc) => {
-        localStorage.setItem('notebook', atob(doc.data().books))
-        localStorage.setItem('lastEdited', doc.data().lastEdited)
-        localStorage.setItem('lastBook', atob(doc.data().lastBook))
-        localStorage.setItem('lastPage', doc.data().lastPage)
         //theme
         localStorage.setItem('theme', docSnap.data().theme || 'light')
         document.body.dataset.theme = localStorage.getItem('theme')
         document.querySelector('button[data-theme="' + localStorage.getItem('theme') + '"]').classList.add('active-theme')
         localStorage.setItem('loginSite', doc.data().loginSite)
-        updateUiCode(localStorage.getItem("lastBook"), docSnap.data().lastPage)
-        reloadFolder()
+        if (localStorage.getItem('lastEdited') == doc.data().lastEdited) {
+          //do nothing
+        } else {
+          localStorage.setItem('notebook', atob(doc.data().books))
+          localStorage.setItem('lastBook', atob(doc.data().lastBook))
+          localStorage.setItem('lastPage', doc.data().lastPage)
+          localStorage.setItem('lastEdited', doc.data().lastEdited)
+          updateUiCode(localStorage.getItem("lastBook"), docSnap.data().lastPage)
+          reloadFolder()
+        }
       })
       //setup on window close
       window.addEventListener('beforeunload', function (e) {

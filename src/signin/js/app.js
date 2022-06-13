@@ -66,6 +66,13 @@ var signin = (e) => {
   if (e === 'email') {
     //TODO: email signin
   }
+  document.getElementById('copy').addEventListener('click', () => {
+    /* document.getElementById('data').select()
+    document.getElementById('data').setSelectionRange(0, 99999)
+    document.execCommand('copy') */
+    navigator.clipboard.writeText(document.getElementById('data').value)
+    alert("Copied to clipboard! now paste it in the app.")
+  })
 }
 document.getElementById('google').addEventListener('click', () => {
 	signin('google')

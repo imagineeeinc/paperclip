@@ -1,0 +1,53 @@
+@import url('./font.css');
+:root {
+  font-family: 'Nunito', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: rgb(235, 255, 245);
+  font-weight: 500;
+}
+button {
+  cursor: pointer;
+}
+a {
+  color: slateblue;
+}
+a:hover {
+  color: slategrey;
+}
+* {
+  outline: none;
+  transition-duration: .2s;
+}
+nav {
+  height: 50px;
+  position: fixed;
+  top:15px;
+  left:25px;
+  border-radius: 10px;
+  font-size: 30px;
+  width: calc(100% - 50px);
+  background-color: transparent;
+  border: 1px solid lightgrey;
+  backdrop-filter: blur(10px);
+  z-index: 5;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+nav > *:not(img) {
+  display: inline-block;
+  margin: 0 10px;
+  transform: translate(0, -15px);
+  margin-left: 10px;
+}
+nav > *:not(img):nth-child(2) {
+  margin-left: 50px;
+}
+#main-img {
+  height: 100%;
+}

@@ -153,6 +153,9 @@ function switchPage(page) {
 		document.getElementById('share-page-link').style.display = 'none'
 	}
 	document.title = folder[curBook][curPage].name + ' (' + curBook + ')'
+	if (window.process) {
+		window.require('electron').ipcRenderer.send('title', folder[curBook][curPage].name + ' (' + curBook + ')')
+	}
 }
 function updateTree() {
 	tree.innerHTML = ''

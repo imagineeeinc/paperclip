@@ -1,5 +1,4 @@
 var { VitePWA } = require('vite-plugin-pwa')
-var {ViteFaviconsPlugin} = require('vite-plugin-favicon')
 var manifest = require('./src/manifest.json')
 const { resolve } = require('path')
 module.exports = {

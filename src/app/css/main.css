@@ -1,187 +1,14 @@
 @import url('./modal.css');
-@import url('../../font.css');
-:root {
-	font-family: 'Nunito', sans-serif;
-	font-size: large;
-}
-body[data-theme=light] {
-	--background: rgb(240, 248, 255);
-	--color: rgb(0, 7, 10);
-	--accent: rgb(0, 59, 70);
-	--white: var(--background);
-}
-body[data-theme=dark] {
-	--background: rgb(10, 19, 28);
-	--color: rgb(195, 203, 207);
-	--accent: rgb(0, 105, 123);
-	--white: rgb(21, 21, 21);
-}
-body[data-theme=black] {
-	--background: rgb(0, 0, 0);
-	--color: rgb(199, 199, 199);
-	--accent: rgb(0, 108, 128);
-	--white: rgb(0, 0, 0);
-}
-@media (prefers-color-scheme: light) {
-  body[data-theme=system] {
-		--background: rgb(240, 248, 255);
-		--color: rgb(0, 7, 10);
-		--accent: rgb(0, 59, 70);
-		--white: var(--background);
-	}
-	#app-icon {
-		background: url('../../img/paperclip-txt.png');
-		background-size: contain;
-		background-repeat: no-repeat;
-	}
-}
-@media (prefers-color-scheme: dark) {
-  body[data-theme=system] {
-		--background: rgb(10, 19, 28);
-		--color: rgb(195, 203, 207);
-		--accent: rgb(0, 77, 90);
-		--white: rgb(21, 21, 21);
-	}
-	#app-icon {
-		background: url('../../img/paperclip-txt-dark.png');
-		background-size: contain;
-		background-repeat: no-repeat;
-	}
-}
-#app-icon {
-	height: 100%;
-	width: 200px;
-	display: inline-block;
-}
-body[data-theme=light] #app-icon {
-	background: url('../../img/paperclip-txt.png');
-	background-size: contain;
-	background-repeat: no-repeat;
-}
-body[data-theme=dark] #app-icon {
-	background: url('../../img/paperclip-txt-dark.png');
-	background-size: contain;
-	background-repeat: no-repeat;
-}
-body[data-theme=black] #app-icon {
-	background: url('../../img/paperclip-txt-dark.png');
-	background-size: contain;
-	background-repeat: no-repeat;
-}
+@import url('../../global.css');
 body {
-	margin: 0;
-	padding: 0;
-	background-color: var(--background);
-	color: var(--color);
-	height: 100vh;
-	width: 100%;
 	opacity: 0;
-	overflow: hidden;
 }
-* {
-	outline: none;
-	transition-duration: .2s;
-}
-a {
-	color: var(--accent) !important;
-	cursor: pointer;
-}
-a:hover {
-	background: var(--accent) !important;
-	color: var(--background) !important;
-	padding: 3px;
-	border-radius: 3px;
-}
-::-webkit-scrollbar {
-	width: 10px;
-	height: 10px;
-}
-::-webkit-scrollbar-track {
-	background-color: var(--background); 
-}
-::-webkit-scrollbar-thumb {
-	background: rgb(185, 185, 185); 
-	border-radius: 10px;
-	transition-duration: .2s;
-}
-::-webkit-scrollbar-thumb:hover {
-	background: rgb(202, 202, 202);
-}
-::selection {
-	background-color: rgba(0, 0, 128, 0.6);
-	color: snow;
-	border-radius: 5px;
-	backdrop-filter: blur(20px);
-}
-.hide {
-	display: none;
-}
-button {
-	background-color: var(--background);
-	color: var(--color);
-	border: 1px solid var(--color);
-	border-radius: 20px;
-	opacity: .8;
-	font-size: inherit;
-	padding: 5px;
-	cursor: pointer;
-}
-button[disabled] {
-	opacity: .7 !important;
-	box-shadow: none !important;
-	background-color: var(--background) !important;
-	color: var(--color) !important;
-	cursor: not-allowed;
-}
-button:hover {
-	opacity: 1;
-	border: 1px solid var(--accent);
-	box-shadow: 3px 3px var(--accent);
-	transform: rotate(2.5deg);
-}button:focus {
-	opacity: 1;
-	border: 1px solid var(--accent);
-}
-button:active {
-	border: 1px solid var(--accent) !important;
-	background-color: var(--color);
-	color: var(--background);
-	transform: rotate(5deg);
-}
-input[type="text"] {
-	border: none;
-	border-bottom: 2px solid var(--accent);
-	background-color: var(--background) !important;
-	color: var(--color) !important;
-	font-size: large;
-	height: 20px;
-	padding: 10px;
-	margin: 10px;
-	font-family: inherit;
-}
-input[type="text"]:focus, select:focus {
-	border: 2px solid var(--accent) !important;
-	box-shadow: 3px 3px rgb(26, 26, 26);
-	border-radius: 5px;
-}
-
 #topbar {
 	padding: 10px;
 	background-color: var(--background);
 	filter: drop-shadow(0px 0px 3px black);
 	height: 30px;
 	user-select: none;
-}
-#beta {
-	display: inline-block;
-	font-size: 15px;
-	font-weight: bold;
-	color: white;
-	background: springgreen;
-	border-radius: 10px;
-	padding: 5px;
-	margin-left: 10px;
-	transform: translate(0, -20px);
 }
 #left-toolbar {
 	position: fixed;
@@ -317,7 +144,7 @@ input[type="text"]:focus, select:focus {
 	user-select: none;
 	overflow-y: auto;
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 	row-gap: 10px;
 	column-gap: 5px;
 }

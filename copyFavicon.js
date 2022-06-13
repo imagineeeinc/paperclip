@@ -7,5 +7,15 @@ fs.copy(source, destination, function (err) {
         console.log('An error occured while copying the folder.')
         return console.error(err)
     }
-    console.log('Copy completed!')
+    console.log('[Favicon] Copy completed!')
+});
+
+var source = './src/.well-known';
+var destination = './dist/.well-known';
+fs.copy(source, destination, function (err) {
+    if (err){
+        console.log('An error occured while copying the folder.')
+        return console.error(err)
+    }
+    console.log('[Well Known] Copy completed!')
 });

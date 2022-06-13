@@ -1,7 +1,0 @@
-{
-  "name": "functions",
-  "private": true,
-  "dependencies": {
-    "firebase-admin": "^10.0.2"
-  }
-}

@@ -15,23 +15,29 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/github.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
-	<title>Paperclip - Sign In</title>
+	<title>Paperclip - Downloads</title>
 </head>
 <body data-theme="system">
-    <div id="app-icon"></div><span id="title">Sign In</span>
-    <br>
-    <div id="sign-btns">
-        <button id="google" class="auth-btn">Sign in with Google </button>
+    <nav>
+        <img src="../img/paperclip-txt.png" id="main-img">
+        <a href="/">Home</a>
+        <a href="/app/">App</a>
+    </nav>
+    <section id="intro">
+        <h1>Downloads</h1>
+        <p>
+            Paperclip is simple and built from the ground up to be offline. So we provide cross-platform Desktop and Mobile application that allows you to create and write offline.
+        </p>
+    </section>
+    <section id="desktop">
+        <h1>Desktop</h1>
+        <img src="../img/paperclip-desktop.png" id="desktop-img">
         <br>
-        <button id="github" class="auth-btn">Sign in with Github </button>
-    </div>
-    <div id="datas">
-        <input id="data" type="text" value="" disabled>
-        <br>
-        <button id="copy">Copy</button>
-        <br>
-        <span style="font-size: larger;">Copy and paste this into the app</span>
-    </div>
+        <button id="get-desktop">Get your platform specific Installer</button>
+    </section>
+    <section id="mobile">
+        <h6>Mobile has not been released yet</h6>
+    </section>
 	<script src="./js/app.js" type="module"></script>
 </body>
 </html>

@@ -51,7 +51,7 @@ export var signin = (e) => {
             const credential = GoogleAuthProvider.credentialFromResult(data);
             signInWithCredential(auth, credential)
             //ask would you like to merge currnent local data with the data from the cloud
-            if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
+            /* if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
               vex.dialog.confirm({
                 message: 'Do you want to merge your local data with the data from the cloud?',
                 callback: (ask) => {
@@ -59,13 +59,13 @@ export var signin = (e) => {
                     sessionStorage.setItem('dontMergeLocal', true)
                   }
                 }
-              })
-            }
+              }) 
+            } */
           } else if (e === 'github') {
             const credential = GithubAuthProvider.credentialFromResult(result);
             signInWithCredential(auth, credential)
             //ask would you like to merge currnent local data with the data from the cloud
-            if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
+            /* if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
               vex.dialog.confirm({
                 message: 'Do you want to merge your local data with the data from the cloud?',
                 callback: (ask) => {
@@ -74,7 +74,7 @@ export var signin = (e) => {
                   }
                 }
               })
-            }
+            } */
           }
         }
       }

@@ -29,7 +29,7 @@ body[data-theme=black] {
 		--white: var(--background);
 	}
 	#app-icon {
-		background: url('../../img/paperclip-txt.png');
+		background: url('./img/paperclip-txt.png');
 		background-size: contain;
 		background-repeat: no-repeat;
 	}
@@ -42,7 +42,7 @@ body[data-theme=black] {
 		--white: rgb(21, 21, 21);
 	}
 	#app-icon {
-		background: url('../../img/paperclip-txt-dark.png');
+		background: url('./img/paperclip-txt-dark.png');
 		background-size: contain;
 		background-repeat: no-repeat;
 	}
@@ -53,17 +53,17 @@ body[data-theme=black] {
 	display: inline-block;
 }
 body[data-theme=light] #app-icon {
-	background: url('../../img/paperclip-txt.png');
+	background: url('./img/paperclip-txt.png');
 	background-size: contain;
 	background-repeat: no-repeat;
 }
 body[data-theme=dark] #app-icon {
-	background: url('../../img/paperclip-txt-dark.png');
+	background: url('./img/paperclip-txt-dark.png');
 	background-size: contain;
 	background-repeat: no-repeat;
 }
 body[data-theme=black] #app-icon {
-	background: url('../../img/paperclip-txt-dark.png');
+	background: url('./img/paperclip-txt-dark.png');
 	background-size: contain;
 	background-repeat: no-repeat;
 }

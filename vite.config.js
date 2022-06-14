@@ -16,6 +16,7 @@ module.exports = {
         share: resolve(__dirname, 'src/share/index.html'),
         404: resolve(__dirname, 'src/404.html'),
         signin: resolve(__dirname, 'src/signin/index.html'),
+        downloads: resolve(__dirname, 'src/downloads/index.html'),
       }
     }
   },

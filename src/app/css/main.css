@@ -1,8 +1,5 @@
 @import url('./modal.css');
 @import url('../../global.css');
-body {
-	opacity: 0;
-}
 #topbar {
 	padding: 10px;
 	background-color: var(--background);

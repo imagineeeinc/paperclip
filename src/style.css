@@ -9,13 +9,16 @@
   font-family: inherit;
   display: inline-block;
   text-align: right;
-  background-color: springgreen;
+  background-color: rgb(81, 255, 168);
   border: none;
   border-radius: 20px;
   padding: 10px;
 }
 #start:hover {
-  background-color: rgb(81, 255, 168);
+  background-color: springgreen;
+  box-shadow: 0 2px 40px 5px springgreen;
+  transform: scale(1.1) rotate(3deg);
+  font-weight: 900;
 }
 #main-screenshot {
   position: absolute;

@@ -36,8 +36,11 @@ nav {
   border: 1px solid lightgrey;
   backdrop-filter: blur(10px);
   z-index: 5;
-  overflow-x: auto;
+  overflow-x: scroll;
   overflow-y: hidden;
+}
+nav::-webkit-scrollbar {
+  display: none;
 }
 nav > *:not(img) {
   display: inline-block;

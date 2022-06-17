@@ -141,7 +141,7 @@
 	user-select: none;
 	overflow-y: auto;
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 	row-gap: 10px;
 	column-gap: 5px;
 }
@@ -172,7 +172,7 @@
 	#cur-page {
 		font-size: medium;
 		padding: 5px;
-		width: calc(100% - 125px);
+		width: calc(100% - 205px);
 		max-width: 300px;
 	}
 	#editor-box {

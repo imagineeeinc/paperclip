@@ -136,13 +136,13 @@ function switchPage(page) {
 	}
 	localStorage.setItem('lastPage', page)
 	setContents(folder[curBook][curPage].data)
-  editorOpen(false)
+  //editorOpen(false)
 	document.getElementById('cur-page').value = folder[curBook][curPage].name
 	document.getElementById('cur-page').dataset.pre = folder[curBook][curPage].name
 	//if (folder[curBook].length != 1) document.querySelector('.selected-page').classList.toggle('selected-page')
 	document.querySelector('.selected-page').classList.toggle('selected-page')
 	document.querySelector('.tree-item[data-num="' + page + '"]').classList.toggle('selected-page')
-	editorFocus()
+	//editorFocus()
 	if (folder[curBook][curPage].shareId) {
 		document.getElementById('share-page-link').style.display = 'block' 
 		document.getElementById('share-page-link').innerHTML = window.location.origin + "/share/#" + folder[curBook][curPage].shareId + "-" + localStorage.getItem('uid')
@@ -174,9 +174,9 @@ function updateTree() {
 		doc.onclick = () => {
 			switchPage(i)
 		}
-		doc.ondblclick = () => {
+		/* doc.ondblclick = () => {
 			document.getElementById("cur-page").focus()
-		}
+		} */
 		if (curPage == i) {
 			doc.classList.toggle('selected-page')
 		}
@@ -365,4 +365,62 @@ fetch('https://api.github.com/repos/imagineeeinc/paperclip/releases/latest')
 }).catch(err => {
 	console.log(err)
 	document.getElementById('app-ver').innerHTML = localStorage.getItem('appVersion')
+})
+
+//keybinds
+document.addEventListener('keydown', (e) => {
+	let key = e.key.toLowerCase()
+	if (key == 's' && e.ctrlKey) {
+		e.preventDefault()
+		if (localStorage.getItem('signdIn') == 'true') {
+			updateDb()
+		}
+	}
+	if (e.altKey && key == 'arrowleft') {
+		e.preventDefault()
+		if (Object.keys(folder)[Object.keys(folder).indexOf(curBook) - 1]) {
+			curBook = Object.keys(folder)[Object.keys(folder).indexOf(curBook) - 1]
+			updateUi(curBook, 0)
+		}
+	}
+	if (e.altKey && key == 'arrowright') {
+		e.preventDefault()
+		if (Object.keys(folder)[Object.keys(folder).indexOf(curBook) + 1]) {
+			curBook = Object.keys(folder)[Object.keys(folder).indexOf(curBook) + 1]
+			updateUi(curBook, 0)
+		}
+	}
+	if (e.altKey && key == 'arrowup') {
+		e.preventDefault()
+		if (Object.keys(folder[curBook]).indexOf(curPage) - 1 >= 0) {
+			curPage = Object.keys(folder[curBook])[Object.keys(folder[curBook]).indexOf(curPage) - 1]
+			updateUi(curBook, curPage)
+		}
+	}
+	if (e.altKey && key == 'arrowdown') {
+		e.preventDefault()
+		if (Object.keys(folder[curBook]).indexOf(curPage) + 1 < Object.keys(folder[curBook]).length) {
+			curPage = Object.keys(folder[curBook])[Object.keys(folder[curBook]).indexOf(curPage) + 1]
+			updateUi(curBook, curPage)
+		}
+	}
+})
+
+//rename btn 
+setInterval(()=>{
+	document.getElementById('rename-page-btn').style.top = document.querySelector('.selected-page').getBoundingClientRect().top + 3 + 'px'
+	document.getElementById('rename-page-btn').style.left = document.querySelector('.selected-page').getBoundingClientRect().left + document.querySelector('.selected-page').clientWidth + 'px'
+}, 100)
+document.getElementById('rename-page-btn').addEventListener('click', () => {
+	let page = document.querySelector('.selected-page')
+	page.contentEditable = true
+	page.focus()
+	page.onkeydown = (e) => {
+		if (e.key === "Enter") {
+			page.contentEditable = false
+			page.blur()
+			folder[curBook][curPage].name = page.innerHTML
+			updateUi(curBook, curPage)
+		}
+	}
 })

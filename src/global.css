@@ -125,6 +125,7 @@ button {
 	font-size: inherit;
 	padding: 5px;
 	cursor: pointer;
+	user-select: none;
 }
 button[disabled] {
 	opacity: .7 !important;

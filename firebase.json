@@ -14,6 +14,14 @@
       {
         "source": "/share/",
         "destination": "/share/index.html"
+      },
+      {
+        "source": "/downloads/",
+        "destination": "/downloads/index.html"
+      },
+      {
+        "source": "/.well-known/assetlinks.json",
+        "destination": "/.well-known/assetlinks.json"
       }
     ],
     "ignore": [

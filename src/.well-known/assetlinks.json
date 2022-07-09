@@ -1,1 +1,5 @@
-{}
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target" : { "namespace": "android_app", "package_name": "web.paperclip.app",
+               "sha256_cert_fingerprints": ["90:EB:51:E8:76:A7:D5:20:43:A4:35:44:99:85:C9:0C:42:FC:EA:E8:53:37:0E:A7:7C:72:AA:B6:4C:62:9E:71"] }
+}]

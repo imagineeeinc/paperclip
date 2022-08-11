@@ -1,8 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInAnonymously, signInWithPopup, signInWithCredential } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInAnonymously, signInWithPopup, signInWithCredential, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser, sendPasswordResetEmail, updateProfile } from "firebase/auth";
 import { getFirestore, collection, setDoc, doc, getDoc, updateDoc, onSnapshot /*, enableIndexedDbPersistence */ } from "firebase/firestore";
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -18,14 +19,22 @@ const firebaseConfig = {
   measurementId: "G-TRN6WHYMDP"
 };
 
+
+
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
+// App check
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider('6Lc6wmohAAAAAOg9wIEZU4iJBJjCCdOuGmZqmbRr'),
+  isTokenAutoRefreshEnabled: true
+});
+
 var store = getFirestore(app)
 let documentRef
 let shareRef
-let myDb
 
 import * as vex from 'vex-js/dist/js/vex.combined.min.js'
 
@@ -33,12 +42,12 @@ function timestamp() {return Math.floor(Date.now() / 1000)}
 
 // Setup Auth
 const auth = getAuth(app);
-auth.languageCode = 'en'
+auth.useDeviceLanguage()
 var googleAuth = new GoogleAuthProvider()
 var githubAuth = new GithubAuthProvider()
 shareRef = collection(store,"shares")
-export var signin = (e) => {
-  if (window.process) {
+export var signin = (e, email, password) => {
+  if (window.process && e.indexOf('email') < 0) {
     window.open('https://' + window.location.host + '/signin/')
     vex.dialog.prompt({
       message: 'Please copy the code from the URL and paste it here:',
@@ -85,33 +94,17 @@ export var signin = (e) => {
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        /* const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        // ... */
-        //ask would you like to merge currnent local data with the data from the cloud
-        /* if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
-          vex.dialog.confirm({
-            message: 'Do you want to merge your local data with the data from the cloud?',
-            callback: (ask) => {
-              if (!ask) {
-                sessionStorage.setItem('dontMergeLocal', true)
-              }
-            }
-          })
-        } */
       }).catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        vex.alert({
-          message: errorMessage
+        vex.dialog.alert({
+          message: errorCode + '\n\n' + errorMessage
         })
         // The email of the user's account used.
         const email = error.email;
         // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
       });
     }
     if(e === 'github') {
@@ -119,29 +112,53 @@ export var signin = (e) => {
       .then((result) => {
         // This gives you a GitHub Access Token. You can use it to access the GitHub API.
         const credential = GithubAuthProvider.credentialFromResult(result);
-        /* const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        // ... */
-        /* if (Object.keys(JSON.parse(localStorage.getItem('notebook'))).length > 0) {
-          vex.dialog.confirm({
-            message: 'Do you want to merge your local data with the data from the cloud?',
-            callback: (ask) => {
-              if (!ask) {
-                sessionStorage.setItem('dontMergeLocal', true)
-              }
-            }
-          })
-        } */
       }).catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
+        vex.dialog.alert({
+          message: errorCode + '\n\n' + errorMessage
+        })
         // The email of the user's account used.
         const email = error.email;
         // The AuthCredential type that was used.
         const credential = GithubAuthProvider.credentialFromError(error);
-        // ...
+      });
+    }
+    if (e === 'create-email') {
+      createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        updateProfile(auth.currentUser, {photoURL: "https://avatars.dicebear.com/api/initials/" + email + ".svg"
+        }).then(() => {
+          // Profile updated!
+          // ...
+        }).catch((error) => {
+          // An error occurred
+          // ...
+        })
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        vex.dialog.alert({
+          message: errorCode + '\n\n' + errorMessage
+        })
+      })
+    }
+    if (e === 'login-email') {
+      signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        vex.dialog.alert({
+          message: errorCode + '\n\n' + errorMessage
+        })
       });
     }
     if (e === 'anoymous') {
@@ -152,15 +169,10 @@ export var signin = (e) => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.email;
-        // The AuthCredential type that was used.
-        const credential = GithubAuthProvider.credentialFromError(error);
-        // ...
+        vex.dialog.alert({
+          message: errorCode + '\n\n' + errorMessage
+        })
       });
-    }
-    if (e === 'email') {
-      //TODO: email signin
     }
   }
 }
@@ -219,6 +231,7 @@ auth.onAuthStateChanged(async user => {
     document.getElementById("user-provider").innerHTML = user.providerData[0].providerId
     localStorage.setItem('uid', user.uid)
 
+    let myDb
     //chek if online data avalible
     documentRef = collection(store,"userDocuments")
     const docSnap = await getDoc(doc(documentRef, user.uid));
@@ -368,35 +381,44 @@ document.getElementById("req-del-account").addEventListener("click", () => {
             reqDelAccount: true,
             theme: localStorage.getItem("theme")
           })
-          signout()
-          localStorage.setItem('reqDelAccount', true)
-          vex.dialog.alert({
-            message: "Your account will be deleted in 24 hours"
-          })
-          vex.dialog.alert({
-            message: "By the way the deleting process is currently manually done so it will take longer than 24 hours (upto a month)"
-          })
-        } else {
-          vex.dialog.confirm({
-            message: 'You have already requested to delete your account, would you like to cancel it?',
-            callback: (ask) => {
-              if (ask) {
-                updateDoc(doc(documentRef, localStorage.getItem('uid')), {
-                  books: localStorage.getItem("notebook"),
-                  lastEdited: timestamp(),
-                  lastBook: localStorage.getItem("lastBook"),
-                  lastPage: localStorage.getItem("lastPage"),
-                  reqDelAccount: false,
-                  theme: localStorage.getItem("theme")
-                })
-                localStorage.removeItem('reqDelAccount')
+          deleteUser(auth.currentUser).then(() => {
+            vex.dialog.alert({
+              message: 'Deleted your account',
+              callback() {
+                location.reload()
               }
-            }
-          })
+            })
+          }).catch((error) => {
+            let errorCode = error.code
+            let errorMessage = error.message
+            vex.dialog.alert({
+              message: errorCode + '\n\n' + errorMessage
+            })
+          });
         }
       }
     }
   })
+})
+// request passoword change
+document.getElementById('reset-password').addEventListener('click', ()=>{
+  if (document.getElementById('email-email').value === '' || document.getElementById('email-email').value === undefined) {
+    vex.dialog.alert({
+      message: 'please provide an email'
+    })
+  } else {
+    sendPasswordResetEmail(auth, document.getElementById('email-email').value)
+    .then(() => {
+      vex.dialog.alert({
+        message: 'password reset email sent, check your inbox (if not there check the spam folder)'
+      })
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // ..
+    });
+  }
 })
 //save button
 document.getElementById("save-btn").addEventListener("click", () => {

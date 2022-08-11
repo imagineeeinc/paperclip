@@ -11,6 +11,7 @@ var toolbarOptions = [
   ['clean']
 ];
 import Quill from 'quill'
+import QuillMarkdown from 'quilljs-markdown'
 
 var quill = new Quill('#editor', {
 	theme: 'snow',
@@ -25,6 +26,7 @@ var quill = new Quill('#editor', {
 	},
 	placeholder: 'Type to get started...',
 });
+new QuillMarkdown(quill)
 quill.focus()
 document.getElementById("undo-btn").onclick = () => quill.history.undo()
 document.getElementById("redo-btn").onclick = () => quill.history.undo()

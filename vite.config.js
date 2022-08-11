@@ -23,7 +23,7 @@ module.exports = {
 	plugins: [
     VitePWA({
 			registerType: 'autoUpdate',
-      manifest: process.env.DEPO == 'vercel' ? manifest : {...manifest, start_url: 'https://paper-clip.web.app/app/', scope: 'https://paper-clip.web.app/'},
+      manifest: process.env.DEPO == 'vercel' ? {...manifest, start_url: 'https://paper-clip.web.app/app/', scope: 'https://paper-clip.web.app/'} : manifest ,
       workbox: {
         cleanupOutdatedCaches: false,
 				globPatterns: ["**/*.{js,css,html,png,svg,jpg,jpeg,gif,json,woff,woff2,ttf,eot}"],

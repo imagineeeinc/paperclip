@@ -30,7 +30,7 @@
         <div id="app-icon"></div>
       </div>
       <div id="right-toolbar">
-        <input type="text" id="cur-page" placeholder="Untitled">
+        <span id="cur-page"></span>
         <button class="material-icons auth-obj" id="save-btn" title="Save Work">
           save
         </button>
@@ -55,13 +55,21 @@
       <button class="material-icons" id="add-book" title="add new notebook">
         add
       </button>
+      <button class="material-icons" id="rename-book" title="Rename current book">
+        drive_file_rename_outline
+      </button>
       <br>
-      <input type="text" id="book-name" placeholder="Notebook name">
+      <button class="material-icons" id="add-page-btn" title="Add new page">
+        add
+      </button>
       <br>
       <ul id="tree-view">
       </ul>
       <button class="material-icons" id="rename-page-btn" title="Rename current page">
         drive_file_rename_outline
+      </button>
+      <button class="material-icons" id="del-page-btn" title="Delete Current Page">
+        delete
       </button>
     </div>
     <div id="editor-box">
@@ -69,12 +77,6 @@
       </div>
     </div>
     <div id="panel">
-      <button class="material-icons" id="add-page-btn" title="Add new page">
-        add
-      </button>
-      <button class="material-icons" id="del-page-btn" title="Delete Current Page">
-        delete
-      </button>
       <button class="material-icons" id="edit-btn" title="Edit Mode">
         edit_off
       </button>
@@ -115,7 +117,7 @@
             <section style="border: 1px solid crimson;border-radius: 10px;background-color: rgba(220, 20, 60, 0.064);">
               <h3>Erasing</h3>
               <button id="del-all" style="border: 1px solid crimson;">Delete All data</button>
-              <button id="req-del-account" class="auth-obj" style="border: 1px solid crimson;">Request Delete Account</button>
+              <button id="req-del-account" class="auth-obj" style="border: 1px solid crimson;">Delete Account</button>
             </section>
           </section>
           <section>
@@ -149,12 +151,35 @@
         </header>
         <div id="account-content" class="modal-content">
           <div id="no-signin" style="text-align: center;">
-            <h2>You are not signed in.</h2>
+            <h1>You are not signed in.</h1>
             <h4>Without signing in you loose out a lot of features</h4>
             <br>
             <br>
             <button id="signin-google" class="auth-btn">Sign in with Google </button>
             <button id="signin-github" class="auth-btn">Sign in with GitHub </button>
+            <br>
+            <hr>
+            <br>
+            <h3>or</h3>
+            <h2>Email Login</h2>
+            <label>
+              email
+              <br>
+              <input type="email" id="email-email" placeholder="email@email.mail">
+            </label>
+            <br>
+            <label>
+              Password
+              <br>
+              <input type="password" id="email-password" placeholder="Pa55w0rb">
+              <br>
+              <button class="material-icons" id="password-vis">visibility</button>
+            </label>
+            <br><br>
+            <button id="login-email">Login</button>
+            <button id="create-email">Create Account</button>
+            <br>
+            <button id="reset-password">Reset Password</button>
           </div>
           <div id="logdin" class="hide">
             <section style="border: 1px solid aquamarine;border-radius: 10px;background-color: rgba(20, 220, 217, 0.064);padding: 5px; font-size: large;">
